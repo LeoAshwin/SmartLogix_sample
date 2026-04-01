@@ -1,0 +1,41 @@
+package com.cognizant.smartlogix.controller;
+
+import com.cognizant.smartlogix.dto.Driver.response.PodResponse;
+import com.cognizant.smartlogix.dto.Driver.PodSubmissionRequest;
+import com.cognizant.smartlogix.dto.ResponseMapper;
+import com.cognizant.smartlogix.model.Pod;
+import com.cognizant.smartlogix.service.PodService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/driver/pod")
+@RequiredArgsConstructor
+public class PodController {
+
+    private final PodService podService;
+    private final ResponseMapper mapper;
+
+    // Requirement 4.5 & 6: Submit POD with SHA-256 integrity check
+    @PostMapping
+    public ResponseEntity<PodResponse> submitPod(@Valid @RequestBody PodSubmissionRequest request) {
+        Pod pod = podService.submitPod(request);
+        return new ResponseEntity<>(mapper.toPodResponse(pod), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/fulfillment/{fulfillmentId}")
+    public ResponseEntity<PodResponse> getPod(@PathVariable Long fulfillmentId) {
+        return podService.getPodByFulfillment(fulfillmentId)
+                .map(pod -> ResponseEntity.ok(mapper.toPodResponse(pod)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{podId}/verify")
+    public ResponseEntity<String> verifyPod(@PathVariable Long podId) {
+        boolean isValid = podService.verifyPodIntegrity(podId);
+        return ResponseEntity.ok("POD Integrity Verified: " + isValid);
+    }
+}
