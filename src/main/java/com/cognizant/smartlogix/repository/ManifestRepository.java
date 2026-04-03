@@ -24,4 +24,7 @@ public interface ManifestRepository extends JpaRepository<Manifest, Long> {
     // Only find manifests that are NOT cancelled
     @Query("SELECT m FROM Manifest m WHERE m.status != 'CANCELLED'")
     List<Manifest> findAllActiveManifests();
+
+    List<Manifest> findByVehicleId(Long vehicleId);
+    List<Manifest> findByDriverId(Long driverId);
 }

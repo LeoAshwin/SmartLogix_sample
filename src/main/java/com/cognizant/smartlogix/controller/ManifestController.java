@@ -5,6 +5,8 @@ import com.cognizant.smartlogix.dto.manifest.ManifestResponseDTO;
 import com.cognizant.smartlogix.dto.manifest.StopDTO;
 import com.cognizant.smartlogix.service.ManifestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,5 +89,15 @@ public class ManifestController {
             @RequestParam(required = false) LocalDate date) {
 
         return ResponseEntity.ok(manifestService.searchManifests(status, driverId, date));
+    }
+
+    @GetMapping("/{id}/export")
+    public ResponseEntity<byte[]> downloadTripSheet(@PathVariable Long id) {
+        byte[] pdfBytes = manifestService.exportManifestToPdf(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=trip_sheet_" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

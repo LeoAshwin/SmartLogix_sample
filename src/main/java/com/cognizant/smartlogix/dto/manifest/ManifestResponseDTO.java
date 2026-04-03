@@ -1,14 +1,16 @@
 package com.cognizant.smartlogix.dto.manifest;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
-public class ManifestResponseDTO {
-    private Long manifestId;
-    private Long vehicleId;
-    private String status;
-    private List<StopDTO> stops; // This maps to your StopsJSON
-}
-
+/**
+ * Modern Java Record for the Manifest Response.
+ * No more @Data or private fields needed!
+ */
+public record ManifestResponseDTO(
+        Long manifestId,
+        Long vehicleId,
+        String status,
+        String scheduledDate,
+        List<StopDTO> stops,
+        Double totalDistance
+) {}

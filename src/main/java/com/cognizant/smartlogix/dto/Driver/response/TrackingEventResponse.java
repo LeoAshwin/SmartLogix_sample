@@ -10,6 +10,6 @@ public class TrackingEventResponse {
     private Long eventId;
     private Long fulfillmentId;
     private String eventType;
-    private String timestamp; // Formatted as String for easier Mobile consumption
+    private String timestamp;
     private LocationDetails location;
 }

@@ -20,9 +20,13 @@ public interface ManifestService {
     public ManifestResponseDTO markStopAsCompleted(Long manifestId, Long fulfillmentId);
     List<ManifestResponseDTO> searchManifests(String status, Long driverId, LocalDate date);
     void cancelManifest(Long manifestId);
+    public byte[] exportManifestToPdf(Long id);
     /**
      * Requirement 4.4: Support manual dispatcher overrides.
      */
     // Change the second parameter from String to List<StopDTO>
     ManifestResponseDTO updateManifestManualOverride(Long manifestId, List<StopDTO> stops);;
+    List<ManifestResponseDTO> getManifestsByStatus(String status);
+    List<ManifestResponseDTO> getManifestsByVehicle(Long vehicleId);
+
 }

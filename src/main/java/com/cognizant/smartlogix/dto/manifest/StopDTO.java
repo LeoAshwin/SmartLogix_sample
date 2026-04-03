@@ -1,18 +1,16 @@
 package com.cognizant.smartlogix.dto.manifest;
 
-import lombok.Data;
-
-@Data
-public class StopDTO {
-    private Long fulfillmentId;
-    private Integer sequence;
-    private String estimatedArrivalTime; // Deterministic ETA
-    private String handlingInstructions;
-
-    // ADD THESE TWO FIELDS:
-    private Double latitude;
-    private Double longitude;
-
-    private String status; // To track if the stop is PENDING or COMPLETED
-    private String actualArrivalTime;
-}
+/**
+ * Record for Stop data.
+ * This represents a single delivery location within a Manifest.
+ */
+public record StopDTO(
+        Long fulfillmentId,
+        Integer sequence,
+        String estimatedArrivalTime,
+        String handlingInstructions,
+        Double latitude,
+        Double longitude,
+        String status,
+        String actualArrivalTime
+) {}
