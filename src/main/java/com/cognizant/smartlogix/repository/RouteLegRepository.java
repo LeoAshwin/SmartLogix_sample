@@ -16,4 +16,11 @@ public interface RouteLegRepository extends JpaRepository<RouteLeg, Long> {
     @Modifying
     @Query("DELETE FROM RouteLeg r WHERE r.manifestId = :manifestId")
     void deleteByManifestId(Long manifestId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE RouteLeg r SET r.status = :status WHERE r.manifestId = :manifestId AND r.sequence = :sequence")
+    void updateStatusByManifestAndSequence(Long manifestId, Integer sequence, String status);
+
+    List<RouteLeg> findByManifestId(Long manifestId);
 }

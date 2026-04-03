@@ -18,4 +18,5 @@ public interface RouteLegService {
     RouteLeg save(RouteLeg leg);
     List<RouteLegDTO> getLegsByManifestId(Long manifestId);
     void deleteByManifestId(Long manifestId);
+
 }

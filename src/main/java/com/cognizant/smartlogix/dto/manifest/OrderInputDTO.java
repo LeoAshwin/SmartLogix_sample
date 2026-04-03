@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OrderInputDTO {
     private Long orderId;
-    private double lat;
-    private double lng;
-    private double weight;
+    private Double lat;
+    private Double lng;
+    private Double weight;
     private LocalDateTime deliveryWindowStart;
 }
 

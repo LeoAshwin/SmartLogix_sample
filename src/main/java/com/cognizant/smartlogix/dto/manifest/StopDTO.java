@@ -12,4 +12,7 @@ public class StopDTO {
     // ADD THESE TWO FIELDS:
     private Double latitude;
     private Double longitude;
+
+    private String status; // To track if the stop is PENDING or COMPLETED
+    private String actualArrivalTime;
 }

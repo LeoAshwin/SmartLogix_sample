@@ -18,30 +18,30 @@ import java.time.LocalDateTime;
 public class Manifest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ManifestID")
+    @Column(name = "`ManifestID`")
     private Long manifestId;
 
-    @Column(name = "DepotID")
+    @Column(name = "`DepotID`")
     private Long depotId;
 
-    @Column(name = "VehicleID")
+    @Column(name = "`VehicleID`")
     private Long vehicleId;
 
-    @Column(name = "DriverID")
+    @Column(name = "`DriverID`")
     private Long driverId;
 
-    @Column(name = "Date")
+    @Column(name = "`Date`")
     private LocalDate date;
 
-    @Column(name = "StartAt")
+    @Column(name = "`StartAt`")
     private LocalDateTime startAt;
 
-    @Column(name = "EndAt")
+    @Column(name = "`EndAt`")
     private LocalDateTime endAt;
 
-    @Column(name = "StopsJSON", columnDefinition = "JSON")
+    @Column(name = "`StopsJSON`", columnDefinition = "JSON")
     private String stopsJson;
 
-    @Column(name = "Status")
+    @Column(name = "`Status`")
     private String status;
 }
