@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class TrackingEventServiceImpl implements TrackingEventService {
 
     private final TrackingEventRepository trackingEventRepository;
@@ -28,7 +27,6 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     public TrackingEvent recordEvent(Long fulfillmentId, EventType newType,
                                      LocationDetails location, TrackingMetadata metadata) {
 
-        // Requirement 4.5: Validate State Transition using Custom Exception
         trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId)
                 .ifPresent(lastEvent -> {
                     if (lastEvent.getEventType() == EventType.DELIVERED) {
@@ -48,10 +46,10 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     }
 
     @Override
-    public List<TrackingEvent> getHistoryByFulfillment(Long fulfillmentId) {
+    public List<TrackingEvent>   getHistoryByFulfillment(Long fulfillmentId) {
         List<TrackingEvent> history = trackingEventRepository.findByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId);
 
-        // If the list is empty, trigger the custom exception
+
         if (history.isEmpty()) {
             throw new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId);
         }

@@ -16,13 +16,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/driver/events")
-@RequiredArgsConstructor
+@RequiredArgsConstructor //Testability:,Immutability,No Circular Dependencies compared to @Autowired
 public class TrackingEventController {
 
     private final TrackingEventService trackingEventService;
-    private final ResponseMapper mapper; // Inject Mapper
+    private final ResponseMapper mapper;
 
-    // Requirement 4.5: Record a new status transition
+
     @PostMapping("/{fulfillmentId}")
     public ResponseEntity<TrackingEventResponse> recordEvent(
             @PathVariable Long fulfillmentId,
@@ -30,12 +30,12 @@ public class TrackingEventController {
             @RequestBody(required = false) LocationDetails location,
             @RequestHeader(value = "X-Device-ID", required = false) String deviceId) {
 
-        // 1. Prepare Metadata (matching your DTO requirements)
+
         TrackingMetadata metadata = new TrackingMetadata();
         metadata.setDeviceId(deviceId != null ? deviceId : "UNKNOWN-DEVICE");
-        metadata.setIsOfflineSync(false); // Default for live recording
+        metadata.setIsOfflineSync(false);
 
-        // 2. Call Service with all 4 required parameters
+
         TrackingEvent event = trackingEventService.recordEvent(
                 fulfillmentId,
                 type,
@@ -43,7 +43,6 @@ public class TrackingEventController {
                 metadata
         );
 
-        // 3. Map to Response DTO and return
         return ResponseEntity.ok(mapper.toTrackingResponse(event));
     }
 
