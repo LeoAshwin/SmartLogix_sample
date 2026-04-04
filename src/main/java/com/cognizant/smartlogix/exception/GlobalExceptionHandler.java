@@ -5,6 +5,7 @@ import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
 //@RestControllerAdvice  uses Aspect Oriented Programming
 @RestControllerAdvice
 @Slf4j
@@ -51,6 +54,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleIntegrity(IntegrityCheckException ex, HttpServletRequest request) {
         log.error("SECURITY ALERT: {}", ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, "DATA_INTEGRITY_FAILURE", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        String combinedErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+
+        log.warn("Validation failed at {}: {}", request.getRequestURI(), combinedErrors);
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "VALIDATION_FAILED",
+                combinedErrors,
+                request
+        );
     }
 
     // Handles 405 Method Not Allowed
