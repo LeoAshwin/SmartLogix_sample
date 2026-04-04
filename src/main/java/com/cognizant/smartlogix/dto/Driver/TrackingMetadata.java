@@ -2,21 +2,25 @@ package com.cognizant.smartlogix.dto.Driver;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class TrackingMetadata {
+public record TrackingMetadata(
+        @NotBlank(message = "Device ID is mandatory for audit trails")
+        String deviceId,
 
-    @NotBlank(message = "Device ID is mandatory for audit trails")
-    private String deviceId;
+        String batteryLevel,
 
-    private String batteryLevel;
+        @NotNull
+        Boolean isOfflineSync,
 
-    @NotNull
-    private Boolean isOfflineSync = false;
+        @NotBlank(message = "Original device timestamp is required for offline sync logic")
+        String deviceLocalTimestamp,
 
-    @NotBlank(message = "Original device timestamp is required for offline sync logic")
-    private String deviceLocalTimestamp;
-
-    private String appVersion;
+     String appVersion // Note: Remove 'private' here as well
+) {
+    // You can add a compact constructor if you need default values
+    public TrackingMetadata {
+        if (isOfflineSync == null) {
+            isOfflineSync = false;
+        }
+    }
 }

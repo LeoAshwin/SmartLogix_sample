@@ -27,11 +27,12 @@ public class ExceptionController {
     public ResponseEntity<ExceptionResponse> reportException(
             @Valid @RequestBody ExceptionReportRequest request) {
 
+        // Change .get...() to .name()
         DeliveryException ex = exceptionService.reportException(
-                request.getFulfillmentId(),
-                request.getDriverId(),
-                request.getReasonCode(),
-                request.getDetails()
+                request.fulfillmentId(), // Changed from getFulfillmentId()
+                request.driverId(),      // Changed from getDriverId()
+                request.reasonCode(),    // Changed from getReasonCode()
+                request.details()        // Changed from getDetails()
         );
 
         return ResponseEntity.ok(mapper.toExceptionResponse(ex));

@@ -28,32 +28,34 @@ public class PodServiceImpl implements PodService {
     @Override
     @Transactional
     public Pod submitPod(PodSubmissionRequest request) {
-        // 1. Idempotency check with a proper error or return
-        if (podRepository.existsByFulfillmentId(request.getFulfillmentId())) {
-            return podRepository.findByFulfillmentId(request.getFulfillmentId())
+        // 1. Idempotency check - notice the change from .getFulfillmentId() to .fulfillmentId()
+        if (podRepository.existsByFulfillmentId(request.fulfillmentId())) {
+            return podRepository.findByFulfillmentId(request.fulfillmentId())
                     .orElseThrow(() -> new ResourceNotFoundException("POD record disappeared unexpectedly"));
         }
 
         Pod pod = Pod.builder()
                 .status(PodStatus.SUBMITTED)
-                .fulfillmentId(request.getFulfillmentId())
+                .fulfillmentId(request.fulfillmentId()) // Changed
                 .deliveredAt(LocalDateTime.now())
-                .deliveredBy(request.getDriverId())
-                .photoUrisJson(request.getPhotoUris())
-                .signatureUri(request.getSignatureUri())
-                .quantityDelivered(request.getQuantityDelivered() != null ? request.getQuantityDelivered() : 1)
-                .notes(request.getNotes())
-                .checksumSha256(calculateSHA256(request.getSignatureUri()))
+                .deliveredBy(request.driverId())        // Changed
+                .photoUrisJson(request.photoUris())     // Changed
+                .signatureUri(request.signatureUri())   // Changed
+                .quantityDelivered(request.quantityDelivered() != null ? request.quantityDelivered() : 1) // Changed
+                .notes(request.notes())                 // Changed
+                .checksumSha256(calculateSHA256(request.signatureUri())) // Changed
                 .build();
 
-
-        // Trigger the State Machine update to DELIVERED
-        trackingEventService.recordEvent(request.getFulfillmentId(), EventType.DELIVERED,
-                request.getLocation(), request.getMetadata());
+        // Trigger the State Machine update - Update all 4 parameters here
+        trackingEventService.recordEvent(
+                request.fulfillmentId(), // Changed
+                EventType.DELIVERED,
+                request.location(),      // Changed
+                request.metadata()       // Changed
+        );
 
         return podRepository.save(pod);
     }
-
     @Override
     public Optional<Pod> getPodByFulfillment(Long fulfillmentId) {
         return podRepository.findByFulfillmentId(fulfillmentId);

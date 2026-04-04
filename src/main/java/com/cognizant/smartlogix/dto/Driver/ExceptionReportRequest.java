@@ -2,19 +2,18 @@ package com.cognizant.smartlogix.dto.Driver;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class ExceptionReportRequest {
+public record ExceptionReportRequest(
+        @NotNull(message = "Fulfillment ID is required")
+        Long fulfillmentId,
 
-    @NotNull(message = "Fulfillment ID is required")
-    private Long fulfillmentId;
+        @NotNull(message = "Driver ID is required")
+        Long driverId,
 
-    @NotNull(message = "Driver ID is required")
-    private Long driverId;
+        @NotBlank(message = "Reason code cannot be empty")
+        String reasonCode, // e.g., CUSTOMER_UNAVAILABLE
 
-    @NotBlank(message = "Reason code cannot be empty")
-    private String reasonCode; // e.g., CUSTOMER_UNAVAILABLE
+        String details
+) {
 
-    private String details;
 }

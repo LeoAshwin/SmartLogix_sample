@@ -28,13 +28,17 @@ public class TrackingEventController {
             @PathVariable Long fulfillmentId,
             @RequestParam EventType type,
             @RequestBody(required = false) LocationDetails location,
-            @RequestHeader(value = "X-Device-ID", required = false) String deviceId) {
+            @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
+            @RequestHeader(value = "X-App-Version", required = false) String appVersion) {
 
-
-        TrackingMetadata metadata = new TrackingMetadata();
-        metadata.setDeviceId(deviceId != null ? deviceId : "UNKNOWN-DEVICE");
-        metadata.setIsOfflineSync(false);
-
+        // You must provide ALL fields defined in the record header at once
+        TrackingMetadata metadata = new TrackingMetadata(
+                deviceId != null ? deviceId : "UNKNOWN-DEVICE", // deviceId
+                "100%",                                        // batteryLevel (placeholder)
+                false,                                         // isOfflineSync
+                String.valueOf(System.currentTimeMillis()),    // deviceLocalTimestamp
+                appVersion != null ? appVersion : "1.0.0"      // appVersion
+        );
 
         TrackingEvent event = trackingEventService.recordEvent(
                 fulfillmentId,
