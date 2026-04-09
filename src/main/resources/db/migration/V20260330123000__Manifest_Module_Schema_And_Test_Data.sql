@@ -5,9 +5,9 @@
 
 CREATE TABLE if not exists Manifest (
                           ManifestID BIGINT PRIMARY KEY AUTO_INCREMENT,
-                          DepotID BIGINT,             -- Changed to BIGINT to match Java Long
-                          VehicleID BIGINT,           -- Changed to BIGINT to match Java Long
-                          DriverID BIGINT,            -- Changed to BIGINT to match Java Long
+                          DepotID BIGINT,
+                          VehicleID BIGINT,
+                          DriverID BIGINT,
                           Date DATE,
                           StartAt DATETIME,
                           EndAt DATETIME,

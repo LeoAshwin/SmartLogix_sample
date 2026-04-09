@@ -1,8 +1,8 @@
 package com.cognizant.smartlogix.dto.manifest;
 
 /**
- * Record for Stop data.
- * This represents a single delivery location within a Manifest.
+ * Data Transfer Object representing a specific delivery point within a manifest's route.
+ * Contains sequencing, geospatial data, and time-tracking metrics for fulfillment.
  */
 public record StopDTO(
         Long fulfillmentId,

@@ -3,8 +3,8 @@ package com.cognizant.smartlogix.dto.manifest;
 import java.util.List;
 
 /**
- * Modern Java Record for the Manifest Response.
- * No more @Data or private fields needed!
+ * Data Transfer Object representing the finalized state of a logistics manifest.
+ * Used to transmit optimized routing details and current execution status to the frontend.
  */
 public record ManifestResponseDTO(
         Long manifestId,
@@ -12,5 +12,6 @@ public record ManifestResponseDTO(
         String status,
         String scheduledDate,
         List<StopDTO> stops,
-        Double totalDistance
+        Double totalDistance,
+        String totalTime
 ) {}

@@ -1,8 +1,8 @@
 package com.cognizant.smartlogix.dto.manifest;
 
 /**
- * Record for Route Leg data.
- * Replaces the Lombok-heavy class with a clean, immutable structure.
+ * Data Transfer Object representing a specific segment between two locations in a manifest.
+ * Encapsulates the sequence, travel metrics, and current status of a single trip leg.
  */
 public record RouteLegDTO(
         Long legId,

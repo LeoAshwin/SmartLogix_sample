@@ -1,22 +1,22 @@
 package com.cognizant.smartlogix.service;
 
-import com.cognizant.smartlogix.dto.manifest.RouteLegDTO;
-import com.cognizant.smartlogix.model.RouteLeg;
 
-import java.util.List;
 
+/**
+ * Service interface for managing individual segments (legs) of a manifest route.
+ * Handles the calculation, storage, and retrieval of trip sequences.
+ */
 public interface RouteLegService {
+
     /**
-     * Deterministically generates legs for a manifest.
-     * RouteLeg save(RouteLeg leg);
+     * Requirement 4.4: Deterministically generates a sequence of route legs
+     * based on the provided manifest ID and serialized stop data.
      */
     void generateLegsForManifest(Long manifestId, String stopsJson);
 
     /**
-     * Fetches all legs for a specific manifest.
+     * Removes all route segments linked to a specific manifest.
+     * Often used during re-optimization or cancellation of a trip.
      */
-    RouteLeg save(RouteLeg leg);
-    List<RouteLegDTO> getLegsByManifestId(Long manifestId);
     void deleteByManifestId(Long manifestId);
-
 }

@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Record for Manifest Requests.
- * Records are immutable by default and handle boilerplate (getters/toString) automatically.
+ * Data Transfer Object representing the initial request to generate a manifest.
+ * Encapsulates depot constraints, vehicle capacity, and the list of orders to be routed.
  */
 public record ManifestRequestDTO(
         Long depotId,
@@ -15,4 +15,9 @@ public record ManifestRequestDTO(
         Double maxCapacityKg,
         Double averageSpeedKmH,
         List<OrderInputDTO> orders
-) {}
+) {
+    /**
+     * Note: As a Java Record, this component is immutable and thread-safe,
+     * making it ideal for passing request data through the Service layer.
+     */
+}

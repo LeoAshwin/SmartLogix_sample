@@ -1,10 +1,10 @@
 package com.cognizant.smartlogix.service.impl;
 
-import com.cognizant.smartlogix.dto.manifest.RouteLegDTO;
 import com.cognizant.smartlogix.dto.manifest.StopDTO;
 import com.cognizant.smartlogix.model.RouteLeg;
 import com.cognizant.smartlogix.repository.RouteLegRepository;
 import com.cognizant.smartlogix.service.RouteLegService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -12,21 +12,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Implementation of RouteLegService managing the segmented delivery path.
+ * Responsible for generating and calculating travel metrics between individual stops.
+ */
 @Service
 public class RouteLegServiceImpl implements RouteLegService {
 
     @Autowired
     private RouteLegRepository routeLegRepository;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper mapper;
 
-    @Override
-    @Transactional
-    public RouteLeg save(RouteLeg leg) {
-        return routeLegRepository.save(leg);
-    }
+    // Constants for logistics calculations
+    private static final double EARTH_RADIUS_KM = 6371.0;
+    private static final double AVG_SPEED_KMH = 30.0;
 
     @Override
     @Transactional
@@ -34,79 +36,51 @@ public class RouteLegServiceImpl implements RouteLegService {
         routeLegRepository.deleteByManifestId(manifestId);
     }
 
+    /**
+     * Requirement 4.4: Parses the manifest stop sequence and persists the individual legs.
+     * Recalculates distances and durations for each segment of the journey.
+     */
     @Override
     @Transactional
     public void generateLegsForManifest(Long manifestId, String stopsJson) {
         try {
-            // Using TypeReference for cleaner deserialization with Records
-            List<StopDTO> stops = mapper.readValue(stopsJson, new TypeReference<List<StopDTO>>() {});
-
+            List<StopDTO> stops = mapper.readValue(stopsJson, new TypeReference<>() {});
             routeLegRepository.deleteByManifestId(manifestId);
 
-            for (StopDTO stop : stops) {
-                RouteLeg leg = new RouteLeg();
-                leg.setManifestId(manifestId);
-                leg.setSequence(stop.sequence()); // Record access: .sequence()
-                leg.setStatus("PENDING");
+            if (stops == null || stops.isEmpty()) return;
+
+            // Generate legs between stops
+            for (int i = 0; i < stops.size() - 1; i++) {
+                StopDTO start = stops.get(i);
+                StopDTO end = stops.get(i + 1);
+
+                double distance = calculateHaversine(start, end);
+
+                RouteLeg leg = RouteLeg.builder()
+                        .manifestId(manifestId)
+                        .sequence(i + 1)
+                        .distanceKm(Math.round(distance * 100.0) / 100.0)
+                        .estimatedDurationMinutes((int) ((distance / AVG_SPEED_KMH) * 60))
+                        .status("PLANNED")
+                        .build();
+
                 routeLegRepository.save(leg);
             }
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            throw new RuntimeException("Invalid StopsJSON format: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to process routing data", e);
         }
     }
 
-    @Override
-    public List<RouteLegDTO> getLegsByManifestId(Long manifestId) {
-        List<RouteLeg> legs = routeLegRepository.findByManifestIdOrderBySequenceAsc(manifestId);
+    /**
+     * Internal utility implementing the Haversine formula for spherical distance.
+     */
+    private double calculateHaversine(StopDTO start, StopDTO end) {
+        double dLat = Math.toRadians(end.latitude() - start.latitude());
+        double dLon = Math.toRadians(end.longitude() - start.longitude());
 
-        return legs.stream().map(leg -> new RouteLegDTO(
-                leg.getLegId(),
-                leg.getManifestId(),
-                leg.getSequence(),
-                leg.getFromLocationJson(),
-                leg.getToLocationJson(),
-                leg.getDistanceKm(),
-                leg.getEstimatedDurationMinutes(),
-                leg.getStatus()
-        )).collect(Collectors.toList());
-    }
+        double a = Math.pow(Math.sin(dLat / 2), 2) +
+                Math.cos(Math.toRadians(start.latitude())) * Math.cos(Math.toRadians(end.latitude())) * Math.pow(Math.sin(dLon / 2), 2);
 
-    @Transactional
-    public void createRouteLegs(Long manifestId, List<StopDTO> stops) {
-        routeLegRepository.deleteByManifestId(manifestId);
-
-        // Loop until stops.size() - 1 to avoid IndexOutOfBounds
-        for (int i = 0; i < stops.size() - 1; i++) {
-            RouteLeg leg = new RouteLeg();
-            leg.setManifestId(manifestId);
-            leg.setSequence(i + 1);
-
-            double distance = calculateDistance(stops.get(i), stops.get(i + 1));
-            leg.setDistanceKm(distance);
-            leg.setStatus("PLANNED");
-
-            routeLegRepository.save(leg);
-        }
-    }
-
-    private double calculateDistance(StopDTO start, StopDTO end) {
-        if (start == null || end == null) return 0.0;
-
-        // Record access: .latitude() and .longitude()
-        double lat1 = start.latitude();
-        double lon1 = start.longitude();
-        double lat2 = end.latitude();
-        double lon2 = end.longitude();
-
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLong = Math.toRadians(lon2 - lon1);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLong / 2) * Math.sin(dLong / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return 6371.0 * c;
+        return EARTH_RADIUS_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 }

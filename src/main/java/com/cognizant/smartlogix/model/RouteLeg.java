@@ -1,11 +1,17 @@
 package com.cognizant.smartlogix.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "`RouteLeg`") // Strictly matching doc
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RouteLeg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

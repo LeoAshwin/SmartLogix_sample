@@ -7,6 +7,7 @@ import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
 import com.cognizant.smartlogix.exception.manifest.CapacityExceededException;
 import com.cognizant.smartlogix.exception.manifest.InvalidRouteException;
+import com.cognizant.smartlogix.exception.manifest.ManifestNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,10 +117,32 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleLogisticsBusinessErrors(Exception ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.UNPROCESSABLE_ENTITY.value()); // 422 is great for logic errors
+        body.put("status", HttpStatus.UNPROCESSABLE_CONTENT.value()); // 422 is great for logic errors
         body.put("error", "Logistics Validation Failed");
         body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_CONTENT);
     }
+
+    /**
+     * Catches ManifestNotFoundException and returns a structured error response.
+     * This ensures the client receives a clear 404 message specific to manifest lookups.
+     */
+//    @ExceptionHandler(ManifestNotFoundException.class)
+//    public ResponseEntity<com.cognizant.smartlogix.dto.Driver.response.ErrorResponse> handleManifestNotFound(
+//            ManifestNotFoundException ex,
+//            HttpServletRequest request) {
+//
+//        // Instantiating using the full path to avoid teammate's import conflict
+//        com.cognizant.smartlogix.dto.Driver.response.ErrorResponse error =
+//                new com.cognizant.smartlogix.dto.Driver.response.ErrorResponse(
+//                        LocalDateTime.now(),              // timestamp
+//                        HttpStatus.NOT_FOUND.value(),     // status
+//                        "Not Found",                      // error
+//                        ex.getMessage(),                  // message
+//                        request.getRequestURI()           // path
+//                );
+//
+//        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+//    }
 
 }

@@ -3,8 +3,8 @@ package com.cognizant.smartlogix.dto.manifest;
 import java.time.LocalDateTime;
 
 /**
- * Record for Order Input data.
- * Records automatically provide a constructor, getters, equals, hashCode, and toString.
+ * Data Transfer Object representing an individual order to be included in a manifest.
+ * Contains geospatial coordinates and delivery constraints for route optimization.
  */
 public record OrderInputDTO(
         Long orderId,
