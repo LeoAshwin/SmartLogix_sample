@@ -4,6 +4,10 @@ package com.cognizant.smartlogix.dto;
 import com.cognizant.smartlogix.dto.Driver.response.ExceptionResponse;
 import com.cognizant.smartlogix.dto.Driver.response.PodResponse;
 import com.cognizant.smartlogix.dto.Driver.response.TrackingEventResponse;
+import com.cognizant.smartlogix.dto.pricing.response.CarrierBookingResponse;
+import com.cognizant.smartlogix.dto.pricing.response.CarrierSettlementResponse;
+import com.cognizant.smartlogix.dto.pricing.response.PricingRuleResponse;
+import com.cognizant.smartlogix.dto.pricing.response.ReturnResponse;
 import com.cognizant.smartlogix.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -62,6 +66,111 @@ public class ResponseMapper {
     public List<ExceptionResponse> toExceptionResponseList(List<DeliveryException> exceptions) {
         return exceptions.stream().map(this::toExceptionResponse).collect(Collectors.toList());
     }
+
+    // --- Return Mapping ---
+    public ReturnResponse toReturnResponse(Return ret) {
+        if (ret == null) return null;
+
+        return new ReturnResponse(
+                ret.getReturnId(),
+                ret.getFulfillmentId(),
+                ret.getReturnLabelUri(),
+                ret.getPickupWindowStart(),
+                ret.getPickupWindowEnd(),
+                ret.getStatus(),
+                ret.getReceivedAt(),
+                ret.getInspectionResultJson()
+        );
+    }
+
+    public List<ReturnResponse> toReturnResponseList(List<Return> returns) {
+        return returns.stream()
+                .map(this::toReturnResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    // --- Pricing Rule Mapping ---
+    public PricingRuleResponse toPricingRuleResponse(PricingRule rule) {
+        if (rule == null) return null;
+
+        return new PricingRuleResponse(
+                rule.getRuleId(),
+                rule.getName(),
+                rule.getConditionsJson(),
+                rule.getCalculationJson(),
+                rule.getEffectiveFrom(),
+                rule.getEffectiveTo(),
+                rule.getPriority(),
+                rule.getStatus()
+        );
+    }
+
+    public List<PricingRuleResponse> toPricingRuleResponseList(
+            List<PricingRule> rules) {
+
+        return rules.stream()
+                .map(this::toPricingRuleResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    // --- Carrier Booking Mapping ---
+    public CarrierBookingResponse toCarrierBookingResponse(
+            CarrierBooking booking) {
+
+        if (booking == null) return null;
+
+        return new CarrierBookingResponse(
+                booking.getCarrierBookingId(),
+                booking.getCarrierId(),
+                booking.getFulfillmentId(),
+                booking.getExternalRef(),
+                booking.getBookedAt(),
+                booking.getStatus(),
+                booking.getFeeAmount(),
+                booking.getCurrency()
+        );
+    }
+
+    public List<CarrierBookingResponse> toCarrierBookingResponseList(
+            List<CarrierBooking> bookings) {
+
+        return bookings.stream()
+                .map(this::toCarrierBookingResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    // --- Carrier Settlement Mapping  ---
+    public CarrierSettlementResponse toCarrierSettlementResponse(
+            CarrierSettlement settlement) {
+
+        if (settlement == null) return null;
+
+        return new CarrierSettlementResponse(
+                settlement.getSettleId(),
+                settlement.getCarrierId(),
+                settlement.getPeriodStart(),
+                settlement.getPeriodEnd(),
+                settlement.getGrossBilled(),
+                settlement.getCarrierFees(),
+                settlement.getCommissions(),
+                settlement.getNetPayable(),
+                settlement.getDiscrepanciesJson(),
+                settlement.getGeneratedAt(),
+                settlement.getStatus()
+        );
+    }
+
+    public List<CarrierSettlementResponse> toCarrierSettlementResponseList(
+            List<CarrierSettlement> settlements) {
+
+        return settlements.stream()
+                .map(this::toCarrierSettlementResponse)
+                .collect(Collectors.toList());
+    }
+
 
 
 }
