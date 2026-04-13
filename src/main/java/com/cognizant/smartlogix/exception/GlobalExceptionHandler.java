@@ -5,6 +5,8 @@ import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import com.cognizant.smartlogix.exception.manifest.CapacityExceededException;
+import com.cognizant.smartlogix.exception.manifest.InvalidRouteException;
 import com.cognizant.smartlogix.exception.manager.InvalidOrderException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 //@RestControllerAdvice  uses Aspect Oriented Programming
 @RestControllerAdvice
@@ -143,4 +146,40 @@ public class GlobalExceptionHandler {
                 request
         );
     }
+
+    // 1. Handle the "Read-Only Lock" and "Invalid Sequence" errors
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Object> handleIllegalState(IllegalStateException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Execution Logic Error");
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    // 2. Handle "Manifest Not Found" errors
+    @ExceptionHandler(com.cognizant.smartlogix.exception.manifest.EntityNotFoundException.class)
+    public ResponseEntity<Object> handleNotFound(Exception ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    // 3. NEW: Handle Logistics Business Rules (Capacity & Route issues)
+    @ExceptionHandler({CapacityExceededException.class, InvalidRouteException.class})
+    public ResponseEntity<Object> handleLogisticsBusinessErrors(Exception ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.UNPROCESSABLE_CONTENT.value()); // 422 is great for logic errors
+        body.put("error", "Logistics Validation Failed");
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_CONTENT);
+    }
+
+
 }
