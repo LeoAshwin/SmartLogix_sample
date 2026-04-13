@@ -1,6 +1,6 @@
 package com.cognizant.smartlogix.controller;
 
-import com.cognizant.smartlogix.dto.Driver.ExceptionReportRequest;
+import com.cognizant.smartlogix.dto.Driver.request.ExceptionReportRequest;
 import com.cognizant.smartlogix.dto.Driver.response.ExceptionResponse;
 import com.cognizant.smartlogix.dto.ResponseMapper;
 import com.cognizant.smartlogix.model.DeliveryException;
@@ -20,31 +20,27 @@ public class ExceptionController {
     private final ExceptionService exceptionService;
     private final ResponseMapper mapper;
 
-    /**
-     * Requirement 4.6: Report a delivery failure
-     */
     @PostMapping("/report")
     public ResponseEntity<ExceptionResponse> reportException(
             @Valid @RequestBody ExceptionReportRequest request) {
 
         DeliveryException ex = exceptionService.reportException(
-                request.getFulfillmentId(),
-                request.getDriverId(),
-                request.getReasonCode(),
-                request.getDetails()
+                request.fulfillmentId(),
+                request.driverId(),
+                request.reasonCode(),
+                request.details()
         );
 
         return ResponseEntity.ok(mapper.toExceptionResponse(ex));
     }
 
-    // For the Dispatcher Dashboard: View all open exceptions
+
     @GetMapping("/open")
     public ResponseEntity<List<ExceptionResponse>> getOpenExceptions() {
         List<DeliveryException> openEx = exceptionService.getOpenExceptions();
         return ResponseEntity.ok(mapper.toExceptionResponseList(openEx));
     }
 
-    // Resolve an exception (Requirement 4.6 logic)
     @PatchMapping("/{exceptionId}/resolve")
     public ResponseEntity<ExceptionResponse> resolveException(
             @PathVariable Long exceptionId,
@@ -52,5 +48,17 @@ public class ExceptionController {
 
         DeliveryException resolvedEx = exceptionService.resolveException(exceptionId, notes);
         return ResponseEntity.ok(mapper.toExceptionResponse(resolvedEx));
+    }
+
+    @GetMapping("/reasons")
+    public ResponseEntity<List<String>> getValidReasonCodes() {
+        // This could return values from an Enum or a DB table
+        return ResponseEntity.ok(exceptionService.getAvailableReasonCodes());
+    }
+
+    @GetMapping("/escalated")
+    public ResponseEntity<List<ExceptionResponse>> getEscalatedExceptions() {
+        List<DeliveryException> escalated = exceptionService.getExceptionsByStatus("ESCALATED");
+        return ResponseEntity.ok(mapper.toExceptionResponseList(escalated));
     }
 }

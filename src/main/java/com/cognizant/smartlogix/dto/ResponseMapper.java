@@ -1,6 +1,6 @@
 package com.cognizant.smartlogix.dto;
 
-import com.cognizant.smartlogix.dto.Driver.*;
+
 import com.cognizant.smartlogix.dto.Driver.response.ExceptionResponse;
 import com.cognizant.smartlogix.dto.Driver.response.PodResponse;
 import com.cognizant.smartlogix.dto.Driver.response.TrackingEventResponse;
@@ -9,9 +9,11 @@ import com.cognizant.smartlogix.dto.pricing.response.CarrierSettlementResponse;
 import com.cognizant.smartlogix.dto.pricing.response.PricingRuleResponse;
 import com.cognizant.smartlogix.dto.pricing.response.ReturnResponse;
 import com.cognizant.smartlogix.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 import java.util.List;
+
 
 
 @Component
