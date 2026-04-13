@@ -5,6 +5,7 @@ import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import com.cognizant.smartlogix.exception.manager.InvalidOrderException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // Helper method to keep your handler clean
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -123,6 +125,21 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred. Please contact support.",
+                request
+        );
+    }
+    // Handles validation errors for Order & Service Zone (400 Bad Request)
+    @ExceptionHandler(InvalidOrderException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOrder(
+            InvalidOrderException ex,
+            HttpServletRequest request) {
+
+        log.warn("Validation error: {}", ex.getMessage());
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "INVALID_REQUEST",
+                ex.getMessage(),
                 request
         );
     }
