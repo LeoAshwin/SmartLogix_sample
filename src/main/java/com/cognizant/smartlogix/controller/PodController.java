@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.controller;
 
 import com.cognizant.smartlogix.dto.Driver.response.PodResponse;
-import com.cognizant.smartlogix.dto.Driver.PodSubmissionRequest;
+import com.cognizant.smartlogix.dto.Driver.request.PodSubmissionRequest;
 import com.cognizant.smartlogix.dto.ResponseMapper;
 import com.cognizant.smartlogix.model.Pod;
 import com.cognizant.smartlogix.service.PodService;
@@ -22,8 +22,15 @@ public class PodController {
     // Requirement 4.5 & 6: Submit POD with SHA-256 integrity check
     @PostMapping
     public ResponseEntity<PodResponse> submitPod(@Valid @RequestBody PodSubmissionRequest request) {
+        boolean exists = podService.getPodByFulfillment(request.fulfillmentId()).isPresent();
+
         Pod pod = podService.submitPod(request);
-        return new ResponseEntity<>(mapper.toPodResponse(pod), HttpStatus.CREATED);
+
+        if (exists) {
+            return ResponseEntity.ok(mapper.toPodResponse(pod));
+        } else {
+            return new ResponseEntity<>(mapper.toPodResponse(pod), HttpStatus.CREATED);
+        }
     }
 
     @GetMapping("/fulfillment/{fulfillmentId}")
