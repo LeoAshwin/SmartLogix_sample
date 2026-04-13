@@ -5,22 +5,14 @@ import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
-import com.cognizant.smartlogix.exception.manifest.CapacityExceededException;
-import com.cognizant.smartlogix.exception.manifest.InvalidRouteException;
-import com.cognizant.smartlogix.exception.manifest.ManifestNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 //@RestControllerAdvice  uses Aspect Oriented Programming
 @RestControllerAdvice
 @Slf4j
@@ -90,60 +82,5 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 1. Handle the "Read-Only Lock" and "Invalid Sequence" errors
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Object> handleIllegalState(IllegalStateException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Execution Logic Error");
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    // 2. Handle "Manifest Not Found" errors
-    @ExceptionHandler(com.cognizant.smartlogix.exception.manifest.EntityNotFoundException.class)
-    public ResponseEntity<Object> handleNotFound(Exception ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-    }
-
-    // 3. NEW: Handle Logistics Business Rules (Capacity & Route issues)
-    @ExceptionHandler({CapacityExceededException.class, InvalidRouteException.class})
-    public ResponseEntity<Object> handleLogisticsBusinessErrors(Exception ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.UNPROCESSABLE_CONTENT.value()); // 422 is great for logic errors
-        body.put("error", "Logistics Validation Failed");
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_CONTENT);
-    }
-
-    /**
-     * Catches ManifestNotFoundException and returns a structured error response.
-     * This ensures the client receives a clear 404 message specific to manifest lookups.
-     */
-//    @ExceptionHandler(ManifestNotFoundException.class)
-//    public ResponseEntity<com.cognizant.smartlogix.dto.Driver.response.ErrorResponse> handleManifestNotFound(
-//            ManifestNotFoundException ex,
-//            HttpServletRequest request) {
-//
-//        // Instantiating using the full path to avoid teammate's import conflict
-//        com.cognizant.smartlogix.dto.Driver.response.ErrorResponse error =
-//                new com.cognizant.smartlogix.dto.Driver.response.ErrorResponse(
-//                        LocalDateTime.now(),              // timestamp
-//                        HttpStatus.NOT_FOUND.value(),     // status
-//                        "Not Found",                      // error
-//                        ex.getMessage(),                  // message
-//                        request.getRequestURI()           // path
-//                );
-//
-//        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-//    }
 
 }

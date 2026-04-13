@@ -1,8 +1,10 @@
 package com.cognizant.smartlogix.service.impl;
 
-import com.cognizant.smartlogix.dto.Driver.PodSubmissionRequest;
+import com.cognizant.smartlogix.dto.Driver.request.PodSubmissionRequest;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
+import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import com.cognizant.smartlogix.model.TrackingEvent;
 import com.cognizant.smartlogix.model.data.PodStatus;
 import lombok.RequiredArgsConstructor;
 import com.cognizant.smartlogix.model.Pod;
@@ -28,32 +30,40 @@ public class PodServiceImpl implements PodService {
     @Override
     @Transactional
     public Pod submitPod(PodSubmissionRequest request) {
-        // 1. Idempotency check with a proper error or return
-        if (podRepository.existsByFulfillmentId(request.getFulfillmentId())) {
-            return podRepository.findByFulfillmentId(request.getFulfillmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("POD record disappeared unexpectedly"));
+
+        if (podRepository.existsByFulfillmentId(request.fulfillmentId())) {
+            throw new InvalidStateTransitionException(
+                    "POD already submitted for Fulfillment ID: " + request.fulfillmentId()
+            );
+        }
+
+        TrackingEvent latest = trackingEventService.getLatestStatus(request.fulfillmentId());
+        if (latest.getEventType() == EventType.DELIVERED) {
+            throw new InvalidStateTransitionException("Fulfillment is already in DELIVERED state.");
         }
 
         Pod pod = Pod.builder()
                 .status(PodStatus.SUBMITTED)
-                .fulfillmentId(request.getFulfillmentId())
+                .fulfillmentId(request.fulfillmentId())
                 .deliveredAt(LocalDateTime.now())
-                .deliveredBy(request.getDriverId())
-                .photoUrisJson(request.getPhotoUris())
-                .signatureUri(request.getSignatureUri())
-                .quantityDelivered(request.getQuantityDelivered() != null ? request.getQuantityDelivered() : 1)
-                .notes(request.getNotes())
-                .checksumSha256(calculateSHA256(request.getSignatureUri()))
+                .deliveredBy(request.driverId())
+                .photoUrisJson(request.photoUris())
+                .signatureUri(request.signatureUri())
+                .quantityDelivered(request.quantityDelivered() != null ? request.quantityDelivered() : 1) // Changed
+                .notes(request.notes())                 // Changed
+                .checksumSha256(calculateSHA256(request.signatureUri())) // Changed
                 .build();
 
 
-        // Trigger the State Machine update to DELIVERED
-        trackingEventService.recordEvent(request.getFulfillmentId(), EventType.DELIVERED,
-                request.getLocation(), request.getMetadata());
+        trackingEventService.recordEvent(
+                request.fulfillmentId(),
+                EventType.DELIVERED,
+                request.location(),
+                request.metadata()
+        );
 
         return podRepository.save(pod);
     }
-
     @Override
     public Optional<Pod> getPodByFulfillment(Long fulfillmentId) {
         return podRepository.findByFulfillmentId(fulfillmentId);

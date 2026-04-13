@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.model;
 
-import com.cognizant.smartlogix.dto.Driver.LocationDetails;
-import com.cognizant.smartlogix.dto.Driver.TrackingMetadata;
+import com.cognizant.smartlogix.dto.Driver.request.LocationDetails;
+import com.cognizant.smartlogix.dto.Driver.request.TrackingMetadata;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
