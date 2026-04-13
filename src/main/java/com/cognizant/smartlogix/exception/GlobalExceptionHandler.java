@@ -1,5 +1,10 @@
 package com.cognizant.smartlogix.exception;
 
+import com.cognizant.smartlogix.exception.pricing.ReturnNotFoundException;
+import com.cognizant.smartlogix.exception.pricing.PricingRuleNotFoundException;
+import com.cognizant.smartlogix.exception.pricing.CarrierBookingNotFoundException;
+import com.cognizant.smartlogix.exception.pricing.CarrierSettlementNotFoundException;
+
 
 import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
@@ -78,6 +83,56 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred. Please contact support.",
+                request
+        );
+    }
+
+        @ExceptionHandler(ReturnNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleReturnNotFound(
+                ReturnNotFoundException ex,
+                HttpServletRequest request) {
+
+            return buildResponse(
+                    HttpStatus.NOT_FOUND,
+                    "RETURN_NOT_FOUND",
+                    ex.getMessage(),
+                    request
+            );
+
+    }
+    @ExceptionHandler(PricingRuleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePricingRuleNotFound(
+            PricingRuleNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "PRICING_RULE_NOT_FOUND",
+                ex.getMessage(),
+                request
+        );
+    }
+    @ExceptionHandler(CarrierBookingNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCarrierBookingNotFound(
+            CarrierBookingNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "CARRIER_BOOKING_NOT_FOUND",
+                ex.getMessage(),
+                request
+        );
+    }
+    @ExceptionHandler(CarrierSettlementNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCarrierSettlementNotFound(
+            CarrierSettlementNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "CARRIER_SETTLEMENT_NOT_FOUND",
+                ex.getMessage(),
                 request
         );
     }
