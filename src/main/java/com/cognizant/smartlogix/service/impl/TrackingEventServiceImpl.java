@@ -1,8 +1,8 @@
 package com.cognizant.smartlogix.service.impl;
 
 
-import com.cognizant.smartlogix.dto.Driver.LocationDetails;
-import com.cognizant.smartlogix.dto.Driver.TrackingMetadata;
+import com.cognizant.smartlogix.dto.Driver.request.LocationDetails;
+import com.cognizant.smartlogix.dto.Driver.request.TrackingMetadata;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +61,26 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     public TrackingEvent getLatestStatus(Long fulfillmentId) {
         return trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId));
+    }
+
+    // Add to TrackingEventServiceImpl.java
+
+    @Override
+    @Transactional
+    @io.micrometer.observation.annotation.Observed(name = "event.sync")
+    public List<TrackingEvent> syncBatch(List<com.cognizant.smartlogix.dto.Driver.request.TrackingEventRequest> requests) {
+        return requests.stream()
+                .map(req -> {
+                    // Check if this specific event already exists (Idempotency)
+                    // Using timestamp + fulfillmentId as a unique identifier for sync
+                    return trackingEventRepository.findByFulfillmentIdAndEventTimestamp(
+                                    req.fulfillmentId(), req.timestamp())
+                            .orElseGet(() -> recordEvent(
+                                    req.fulfillmentId(),
+                                    req.type(),
+                                    req.location(),
+                                    req.metadata()));
+                })
+                .collect(java.util.stream.Collectors.toList());
     }
 }

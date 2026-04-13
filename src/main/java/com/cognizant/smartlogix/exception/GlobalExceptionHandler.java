@@ -5,6 +5,7 @@ import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -21,7 +23,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // Helper method to keep your handler clean
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -89,6 +90,28 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "The requested static resource was not found", request);
     }
 
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(HandlerMethodValidationException ex, HttpServletRequest request) {
+        String message = ex.getValueResults().stream()
+                .map(res -> res.getResolvableErrors().get(0).getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", message, request);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+            ConstraintViolationException ex, HttpServletRequest request) {
+
+        log.warn("Validation constraint violated: {}", ex.getMessage());
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "VALIDATION_ERROR",
+                "Invalid data in request: " + ex.getMessage(),
+                request
+        );
+    }
 
     // 4. Catch-all for unexpected server errors (500 Internal Server Error)
     @ExceptionHandler(Exception.class)

@@ -1,6 +1,6 @@
 package com.cognizant.smartlogix.dto.Driver.response;
 
-import com.cognizant.smartlogix.dto.Driver.LocationDetails;
+import com.cognizant.smartlogix.dto.Driver.request.LocationDetails;
 import lombok.Builder;
 
 @Builder

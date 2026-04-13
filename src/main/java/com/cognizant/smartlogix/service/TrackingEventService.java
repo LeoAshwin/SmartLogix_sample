@@ -1,6 +1,7 @@
 package com.cognizant.smartlogix.service;
-import com.cognizant.smartlogix.dto.Driver.LocationDetails;
-import com.cognizant.smartlogix.dto.Driver.TrackingMetadata;
+import com.cognizant.smartlogix.dto.Driver.request.LocationDetails;
+import com.cognizant.smartlogix.dto.Driver.request.TrackingEventRequest;
+import com.cognizant.smartlogix.dto.Driver.request.TrackingMetadata;
 import com.cognizant.smartlogix.model.TrackingEvent;
 import com.cognizant.smartlogix.model.data.EventType;
 
@@ -13,6 +14,9 @@ public interface TrackingEventService {
                               LocationDetails location, TrackingMetadata metadata);
 
     List<TrackingEvent> getHistoryByFulfillment(Long fulfillmentId);
+
+    List<TrackingEvent> syncBatch(List<TrackingEventRequest> requests);
+
 
 
     TrackingEvent getLatestStatus(Long fulfillmentId);
