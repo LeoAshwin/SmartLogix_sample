@@ -1,4 +1,4 @@
-package com.cognizant.smartlogix.dto.Driver;
+package com.cognizant.smartlogix.dto.Driver.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

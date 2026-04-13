@@ -2,6 +2,7 @@ package com.cognizant.smartlogix.service.impl;
 
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
 import com.cognizant.smartlogix.model.data.DeliveryStatus;
+import com.cognizant.smartlogix.repository.PodRepository;
 import lombok.RequiredArgsConstructor;
 import com.cognizant.smartlogix.model.DeliveryException;
 import com.cognizant.smartlogix.model.data.EventType;
@@ -20,6 +21,7 @@ public class ExceptionServiceImpl implements ExceptionService {
 
     private final DeliveryExceptionRepository exceptionRepository;
     private final TrackingEventService trackingEventService;
+    private final PodRepository podRepository;
 
     @Override
     @Transactional
@@ -75,4 +77,30 @@ public class ExceptionServiceImpl implements ExceptionService {
         ex.setDetails(ex.getDetails() + " | Resolution: " + notes);
         return exceptionRepository.save(ex);
     }
+
+    // Add to ExceptionServiceImpl.java
+
+    @Override
+    public List<String> getAvailableReasonCodes() {
+        // These should match your business logic rules for deterministic reattempts
+        return List.of(
+                "CUSTOMER_UNAVAILABLE",
+                "ACCESS_CODE_REQUIRED",
+                "RECIPIENT_REFUSED",
+                "WEATHER_DELAY",
+                "DAMAGED_IN_TRANSIT"
+        );
+    }
+
+    @Override
+    public List<DeliveryException> getExceptionsByStatus(String status) {
+        try {
+            DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status.toUpperCase());
+            return exceptionRepository.findByStatusOrderByRaisedAtDesc(deliveryStatus);
+        } catch (IllegalArgumentException e) {
+            throw new com.cognizant.smartlogix.exception.driver.ResourceNotFoundException("Invalid status: " + status);
+        }
+    }
+
+
 }
