@@ -9,98 +9,125 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 /**
- * Implementation of PdfExportService using the OpenPDF library.
- * Converts logistics manifest data into a standardized A4 trip sheet for physical distribution.
+ * Service implementation for generating shipment manifest PDF documents.
+ * Handles tabular layout, status-based color coding, and time formatting.
  */
 @Service
 public class PdfExportServiceImpl implements PdfExportService {
 
-    /**
-     * Requirement 4.4: Generates a binary PDF document containing manifest metadata
-     * and a sequenced table of delivery stops with calculated ETAs.
-     */
     @Override
     public byte[] generateManifestPdf(ManifestResponseDTO manifest) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Document document = new Document(PageSize.A4);
+        Document document = new Document(PageSize.A4, 36, 36, 36, 36);
 
         try {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
+            // Fonts
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Color.BLACK);
+            Font subHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, Color.DARK_GRAY);
+            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Color.WHITE);
+            Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
 
+            // Title Section
             Paragraph title = new Paragraph("SmartLogix - Digital Trip Sheet", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20);
             document.add(title);
-            document.add(new Paragraph(" "));
 
-            // 1. MANIFEST SUMMARY SECTION
+            // 1. MANIFEST SUMMARY BOX
             PdfPTable summaryTable = new PdfPTable(2);
             summaryTable.setWidthPercentage(100);
-            summaryTable.setSpacingAfter(15);
+            summaryTable.setSpacingAfter(20);
 
-            summaryTable.addCell(new Phrase("Manifest ID: " + manifest.manifestId()));
-            summaryTable.addCell(new Phrase("Date: " + manifest.scheduledDate()));
-            summaryTable.addCell(new Phrase("Vehicle ID: " + manifest.vehicleId()));
-            summaryTable.addCell(new Phrase("Status: " + manifest.status()));
-
-            // FIX: Use the totalTime field from the DTO instead of the internal calculation
-            summaryTable.addCell(new Phrase("Est. Total Time: " + manifest.totalTime()));
-            summaryTable.addCell(new Phrase("Total Distance: " + manifest.totalDistance() + " km"));
+            addSummaryCell(summaryTable, "Manifest ID: " + manifest.manifestId(), subHeaderFont);
+            addSummaryCell(summaryTable, "Scheduled Date: " + manifest.scheduledDate(), subHeaderFont);
+            addSummaryCell(summaryTable, "Vehicle ID: " + manifest.vehicleId(), subHeaderFont);
+            addSummaryCell(summaryTable, "Current Status: " + manifest.status(), subHeaderFont);
+            addSummaryCell(summaryTable, "Total Est. Duration: " + manifest.totalTime(), subHeaderFont);
+            addSummaryCell(summaryTable, "Travel Distance: " + manifest.totalDistance() + " km", subHeaderFont);
 
             document.add(summaryTable);
 
             // 2. DELIVERY STOPS TABLE
-            PdfPTable stopsTable = new PdfPTable(new float[]{1, 2, 4, 3});
+            // Width distribution: Seq(8%), ID(12%), Location(30%), Est(15%), Actual(15%), Status(20%)
+            PdfPTable stopsTable = new PdfPTable(new float[]{0.8f, 1.2f, 3f, 1.5f, 1.5f, 2f});
             stopsTable.setWidthPercentage(100);
 
-            Stream.of("Seq", "ID", "Location (Lat/Lon)", "Estimated Arrival")
+            // Header Row
+            Stream.of("Seq", "Fulfillment ID", "Coordinates", "Est. Arrival", "Actual Time", "Status")
                     .forEach(columnTitle -> {
-                        PdfPCell header = new PdfPCell(new Phrase(columnTitle, headerFont));
-                        header.setBackgroundColor(java.awt.Color.LIGHT_GRAY);
+                        PdfPCell header = new PdfPCell(new Phrase(columnTitle, tableHeaderFont));
+                        header.setBackgroundColor(new Color(44, 62, 80)); // Professional Navy
                         header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        header.setPadding(6);
                         stopsTable.addCell(header);
                     });
 
+            // Data Rows
             for (StopDTO stop : manifest.stops()) {
-                stopsTable.addCell(String.valueOf(stop.sequence()));
-                stopsTable.addCell(String.valueOf(stop.fulfillmentId()));
-                stopsTable.addCell(stop.latitude() + ", " + stop.longitude());
-                stopsTable.addCell(stop.estimatedArrivalTime());
+                stopsTable.addCell(createCenterCell(String.valueOf(stop.sequence()), cellFont));
+                stopsTable.addCell(createCenterCell(String.valueOf(stop.fulfillmentId()), cellFont));
+                stopsTable.addCell(createCenterCell(stop.latitude() + ", " + stop.longitude(), cellFont));
+
+                // Time Formatting Logic
+                stopsTable.addCell(createCenterCell(formatTime(stop.estimatedArrivalTime()), cellFont));
+                stopsTable.addCell(createCenterCell(formatTime(stop.actualArrivalTime()), cellFont));
+
+                // Status with conditional highlights
+                PdfPCell statusCell = createCenterCell(stop.status(), cellFont);
+                if ("COMPLETED".equals(stop.status())) {
+                    statusCell.setBackgroundColor(new Color(232, 245, 233)); // Very Light Green
+                }
+                stopsTable.addCell(statusCell);
             }
 
             document.add(stopsTable);
+
+            // 3. SIGNATURE SECTION
+            Paragraph sign = new Paragraph("\n\n\n__________________________\nDriver Signature", subHeaderFont);
+            sign.setAlignment(Element.ALIGN_RIGHT);
+            document.add(sign);
+
             document.close();
 
-        } catch (DocumentException e) {
-            throw new RuntimeException("Error during PDF document construction", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Critical failure during PDF generation for manifest: " + manifest.manifestId(), e);
         }
         return out.toByteArray();
     }
 
-// DELETE the calculateTravelDuration(ManifestResponseDTO manifest) method entirely.
-// You don't need it anymore because the Service handles the calculation now!
-
-    /**
-     * Internal utility to calculate duration between the first and last stops.
-     */
-    private String calculateTravelDuration(ManifestResponseDTO manifest) {
-        if (manifest.stops() == null || manifest.stops().size() < 2) return "N/A";
+    /** Simple helper for formatting ISO strings to HH:mm for the PDF view. */
+    private String formatTime(String dateTime) {
+        if (dateTime == null || dateTime.equals("null") || dateTime.isEmpty()) return "--:--";
         try {
-            LocalDateTime start = LocalDateTime.parse(manifest.stops().get(0).estimatedArrivalTime());
-            LocalDateTime end = LocalDateTime.parse(manifest.stops().get(manifest.stops().size() - 1).estimatedArrivalTime());
-            Duration duration = Duration.between(start, end);
-            return String.format("%dh %02dm", duration.toHours(), duration.toMinutesPart());
+            if (dateTime.contains("T")) {
+                return dateTime.split("T")[1].substring(0, 5);
+            }
+            return dateTime;
         } catch (Exception e) {
-            return "Check ETAs";
+            return dateTime;
         }
+    }
+
+    private void addSummaryCell(PdfPTable table, String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setPadding(4);
+        table.addCell(cell);
+    }
+
+    private PdfPCell createCenterCell(String text, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text != null ? text : "--", font));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setPadding(5);
+        return cell;
     }
 }
