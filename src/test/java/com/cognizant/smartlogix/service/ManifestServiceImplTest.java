@@ -8,7 +8,6 @@ import com.cognizant.smartlogix.dto.manifest.*;
 import com.cognizant.smartlogix.model.Manifest;
 import com.cognizant.smartlogix.repository.ManifestRepository;
 import com.cognizant.smartlogix.repository.RouteLegRepository;
-import com.cognizant.smartlogix.service.RouteLegService;
 import com.cognizant.smartlogix.service.impl.ManifestServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
