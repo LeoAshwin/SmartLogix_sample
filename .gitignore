@@ -1,0 +1,29 @@
+# ─── Compiled output ──────────────────────────────────────────────────────────
+target/
+*.class
+
+# ─── Packaging ────────────────────────────────────────────────────────────────
+*.jar
+*.war
+*.ear
+
+# ─── Local secrets / environment-specific config ──────────────────────────────
+# Contains real DB credentials — NEVER commit this file
+src/main/resources/application-local.properties
+src/main/resources/application-local.yml
+
+# ─── IDE files ────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.classpath
+*.project
+.settings/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+spring-boot.log
+
+# ─── OS files ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
