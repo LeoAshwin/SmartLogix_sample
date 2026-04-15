@@ -2,7 +2,6 @@ package com.cognizant.smartlogix.controller;
 
 import com.cognizant.smartlogix.dto.OpsTrace.request.KpiRequestDTO;
 import com.cognizant.smartlogix.dto.OpsTrace.response.KpiResponseDTO;
-import com.cognizant.smartlogix.model.data.Kpi;
 import com.cognizant.smartlogix.service.KpiService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,51 +12,47 @@ import java.util.Map;
 @RequestMapping("/kpis")
 public class KpiController {
 
-    private final KpiService service;
+    private final KpiService kpiService;
 
-    public KpiController(KpiService service) {
-        this.service = service;
+    public KpiController(KpiService kpiService) {
+        this.kpiService = kpiService;
     }
 
-    // ✅ Store KPI
+    // ✅ CREATE KPI
     @PostMapping
-    public KpiResponseDTO create(@RequestBody KpiRequestDTO dto) {
-
-        Kpi kpi = new Kpi();
-        kpi.setName(dto.name());
-        kpi.setValue(dto.value());
-        kpi.setUnit(dto.unit());
-        kpi.setRecordedAt(dto.recordedAt());
-
-        Kpi saved = service.createKpi(kpi);
-
-        return new KpiResponseDTO(
-                saved.getKpiId(),
-                saved.getName(),
-                saved.getValue(),
-                saved.getUnit(),
-                saved.getRecordedAt()
-        );
+    public KpiResponseDTO createKpi(@RequestBody KpiRequestDTO request) {
+        return kpiService.create(request);
     }
 
-    // ✅ Fetch stored KPIs
+    // ✅ GET ALL KPIs
     @GetMapping
-    public List<KpiResponseDTO> getAll() {
-        return service.getAllKpis()
-                .stream()
-                .map(k -> new KpiResponseDTO(
-                        k.getKpiId(),
-                        k.getName(),
-                        k.getValue(),
-                        k.getUnit(),
-                        k.getRecordedAt()
-                ))
-                .toList();
+    public List<KpiResponseDTO> getAllKpis() {
+        return kpiService.getAll();
     }
 
-    // ✅ DASHBOARD KPIs (DUMMY FEATURE)
+    // ✅ GET KPI BY ID
+    @GetMapping("/{id}")
+    public KpiResponseDTO getKpiById(@PathVariable Long id) {
+        return kpiService.getById(id);
+    }
+
+    // ✅ PARTIAL UPDATE (PATCH)
+    @PatchMapping("/{id}")
+    public KpiResponseDTO updateKpiPartially(
+            @PathVariable Long id,
+            @RequestBody KpiRequestDTO request) {
+        return kpiService.patch(id, request);
+    }
+
+    // ✅ DELETE KPI
+    @DeleteMapping("/{id}")
+    public void deleteKpi(@PathVariable Long id) {
+        kpiService.delete(id);
+    }
+
+    // ✅ KPI DASHBOARD (PDF FEATURE)
     @GetMapping("/dashboard")
-    public Map<String, Object> dashboardKpis() {
-        return service.getComputedKpis();
+    public Map<String, Object> getKpiDashboard() {
+        return kpiService.getDashboard();
     }
 }

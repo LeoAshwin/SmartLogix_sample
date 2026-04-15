@@ -1,18 +1,23 @@
 package com.cognizant.smartlogix.service;
 
-import com.cognizant.smartlogix.model.data.CarrierAdapter;
+import com.cognizant.smartlogix.dto.OpsTrace.request.CarrierAdapterRequestDTO;
+import com.cognizant.smartlogix.dto.OpsTrace.response.CarrierAdapterResponseDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CarrierAdapterService {
 
-    CarrierAdapter createAdapter(CarrierAdapter adapter);
+    CarrierAdapterResponseDTO create(CarrierAdapterRequestDTO dto);
 
-    List<CarrierAdapter> getAllAdapters();
+    List<CarrierAdapterResponseDTO> getAll();
 
-    CarrierAdapter getAdapterById(Long id);
+    CarrierAdapterResponseDTO getById(Long id);
 
-    // ✅ Dummy sync
-    Map<String, Object> syncAdapter(Long adapterId);
+    CarrierAdapterResponseDTO update(Long id, CarrierAdapterRequestDTO dto);
+
+    CarrierAdapterResponseDTO patch(Long id, CarrierAdapterRequestDTO dto);
+
+    CarrierAdapterResponseDTO sync(Long id);
+
+    void delete(Long id);
 }

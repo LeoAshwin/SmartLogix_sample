@@ -1,9 +1,10 @@
 package com.cognizant.smartlogix.exception.OpsTrace;
 
-public class AuditPackageNotFoundException
-        extends RuntimeException {
+import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+
+public class AuditPackageNotFoundException extends ResourceNotFoundException {
 
     public AuditPackageNotFoundException(Long id) {
-        super("Audit package not found with id: " + id);
+        super("Audit Package not found with id: " + id);
     }
 }
