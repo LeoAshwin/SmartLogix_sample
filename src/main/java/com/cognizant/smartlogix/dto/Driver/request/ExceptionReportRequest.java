@@ -11,7 +11,7 @@ public record ExceptionReportRequest(
         Long driverId,
 
         @NotBlank(message = "Reason code cannot be empty")
-        String reasonCode, // e.g., CUSTOMER_UNAVAILABLE
+        String reasonCode,
 
         String details
 ) {

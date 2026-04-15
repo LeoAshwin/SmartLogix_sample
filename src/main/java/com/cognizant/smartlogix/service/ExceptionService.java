@@ -9,9 +9,7 @@ public interface ExceptionService {
     DeliveryException reportException(Long fulfillmentId, Long driverId,
                                       String reasonCode, String details);
 
-
     List<DeliveryException> getOpenExceptions();
-
 
     void escalateException(Long exceptionId);
 

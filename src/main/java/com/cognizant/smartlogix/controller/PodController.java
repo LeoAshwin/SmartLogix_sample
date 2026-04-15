@@ -19,7 +19,6 @@ public class PodController {
     private final PodService podService;
     private final ResponseMapper mapper;
 
-    // Requirement 4.5 & 6: Submit POD with SHA-256 integrity check
     @PostMapping
     public ResponseEntity<PodResponse> submitPod(@Valid @RequestBody PodSubmissionRequest request) {
         boolean exists = podService.getPodByFulfillment(request.fulfillmentId()).isPresent();

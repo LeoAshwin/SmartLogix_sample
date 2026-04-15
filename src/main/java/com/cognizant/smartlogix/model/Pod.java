@@ -28,11 +28,11 @@ public class Pod {
     private LocalDateTime deliveredAt;
 
     @Column(nullable = false)
-    private Long deliveredBy; // Link to Amila's Driver table
+    private Long deliveredBy;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
-    private List<String> photoUrisJson; // Array of URIs
+    private List<String> photoUrisJson;
 
     private String signatureUri;
 
@@ -43,7 +43,7 @@ public class Pod {
     private String notes;
 
     @Column(length = 64)
-    private String checksumSha256; // For tamper evidence (Requirement 3)
+    private String checksumSha256;
 
     @Enumerated(EnumType.STRING)
     private PodStatus status = PodStatus.PENDING;

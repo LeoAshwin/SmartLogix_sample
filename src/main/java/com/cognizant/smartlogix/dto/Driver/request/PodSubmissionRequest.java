@@ -26,7 +26,7 @@ public record PodSubmissionRequest(
 
         TrackingMetadata metadata
 ) {
-    // Compact Constructor for default values
+
     public PodSubmissionRequest {
         if (quantityDelivered == null) {
             quantityDelivered = 1;

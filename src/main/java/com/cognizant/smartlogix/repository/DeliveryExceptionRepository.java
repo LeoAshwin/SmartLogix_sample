@@ -10,10 +10,8 @@ import java.util.List;
 @Repository
 public interface DeliveryExceptionRepository extends JpaRepository<DeliveryException, Long> {
 
-    // Find all unresolved exceptions for the Dispatcher Dashboard
     List<DeliveryException> findByStatusOrderByRaisedAtDesc(DeliveryStatus status);
 
-    // Find exceptions for a specific fulfillment to see reattempt history
     List<DeliveryException> findByFulfillmentIdOrderByRaisedAtDesc(Long fulfillmentId);
 
     @Query("SELECT e FROM DeliveryException e WHERE e.status = :status AND e.retryCount >= :threshold")

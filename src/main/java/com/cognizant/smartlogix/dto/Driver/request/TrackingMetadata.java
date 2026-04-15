@@ -15,9 +15,9 @@ public record TrackingMetadata(
         @NotBlank(message = "Original device timestamp is required for offline sync logic")
         String deviceLocalTimestamp,
 
-     String appVersion // Note: Remove 'private' here as well
+     String appVersion
 ) {
-    // You can add a compact constructor if you need default values
+
     public TrackingMetadata {
         if (isOfflineSync == null) {
             isOfflineSync = false;

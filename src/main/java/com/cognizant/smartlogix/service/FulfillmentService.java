@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.service;
 
 import com.cognizant.smartlogix.dto.Manager.FulfillmentRequest;
-import com.cognizant.smartlogix.dto.Driver.response.FulfillmentResponse;
+import com.cognizant.smartlogix.dto.Manager.FulfillmentResponse;
 
 /**
  * Service interface for order ingestion and fulfillment creation.

@@ -8,10 +8,8 @@ import java.util.Optional;
 @Repository
 public interface PodRepository extends JpaRepository<Pod, Long> {
 
-    // Find POD by Fulfillment ID for the Merchant Portal (Module 4.10)
     Optional<Pod> findByFulfillmentId(Long fulfillmentId);
 
-    // Check if a POD already exists before saving (Idempotency check)
     boolean existsByFulfillmentId(Long fulfillmentId);
 
 }

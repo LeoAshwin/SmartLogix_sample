@@ -11,7 +11,7 @@ public record PodResponse(
         String deliveredAt,
         List<String> photoUris,
         String signatureUri,
-        String checksum // SHA-256 for integrity check
+        String checksum
 ) {
-    // No @Data needed, and fields are no longer 'private'
+
 }

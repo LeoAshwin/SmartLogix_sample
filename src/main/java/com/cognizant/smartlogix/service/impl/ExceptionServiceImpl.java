@@ -28,11 +28,10 @@ public class ExceptionServiceImpl implements ExceptionService {
     public DeliveryException reportException(Long fulfillmentId, Long driverId,
                                              String reasonCode, String details) {
 
-        // 1. Calculate current state before building
+
         int previousAttempts = exceptionRepository.findByFulfillmentIdOrderByRaisedAtDesc(fulfillmentId).size();
         int newRetryCount = previousAttempts + 1;
 
-        // 2. Deterministic Logic for the suggested action
         String action = (newRetryCount >= 3) ? "RETURN_TO_HUB" : "REATTEMPT_NEXT_WINDOW";
 
         DeliveryException ex = DeliveryException.builder()
@@ -43,11 +42,9 @@ public class ExceptionServiceImpl implements ExceptionService {
                 .raisedAt(LocalDateTime.now())
                 .status(DeliveryStatus.OPEN)
                 .retryCount(newRetryCount)
-                .suggestedAction(action) // Set the calculated action here
+                .suggestedAction(action)
                 .build();
 
-
-        // 4. Update tracking history
         trackingEventService.recordEvent(fulfillmentId, EventType.FAILED, null, null);
         return exceptionRepository.save(ex);
     }
@@ -78,11 +75,9 @@ public class ExceptionServiceImpl implements ExceptionService {
         return exceptionRepository.save(ex);
     }
 
-    // Add to ExceptionServiceImpl.java
 
     @Override
     public List<String> getAvailableReasonCodes() {
-        // These should match your business logic rules for deterministic reattempts
         return List.of(
                 "CUSTOMER_UNAVAILABLE",
                 "ACCESS_CODE_REQUIRED",

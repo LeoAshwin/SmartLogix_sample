@@ -14,15 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/api/v1/driver/events")
-@RequiredArgsConstructor//Testability:,Immutability,No Circular Dependencies compared to @Autowired
+@RequiredArgsConstructor
 @Slf4j
-@Validated
+@Validated //(class and method level validation)
 public class TrackingEventController {
 
     private final TrackingEventService trackingEventService;
@@ -37,7 +36,7 @@ public class TrackingEventController {
             @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
             @RequestHeader(value = "X-App-Version", required = false) String appVersion) {
 
-        // You must provide ALL fields defined in the record header at once
+
         TrackingMetadata metadata = new TrackingMetadata(
                 deviceId != null ? deviceId : "UNKNOWN-DEVICE",
                 "100%",

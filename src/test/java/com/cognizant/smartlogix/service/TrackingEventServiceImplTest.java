@@ -47,17 +47,16 @@ public class TrackingEventServiceImplTest {
     @DisplayName("Should successfully record DELIVERED event when previous state is OUT_FOR_DELIVERY")
     public void recordEvent_Success() {
         // Arrange
-        // Using OUT_FOR_DELIVERY as the valid previous state
         TrackingEvent lastEvent = TrackingEvent.builder()
                 .fulfillmentId(fulfillmentId)
                 .eventType(EventType.OUT_FOR_DELIVERY)
                 .build();
 
-        // Mock the repository behavior
+
        Mockito. when(trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId))
                 .thenReturn(Optional.of(lastEvent));
 
-        // Mock save to return the object it receives
+
         when(trackingEventRepository.save(any(TrackingEvent.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // Act
@@ -69,7 +68,7 @@ public class TrackingEventServiceImplTest {
         assertEquals(EventType.DELIVERED, result.getEventType());
         assertEquals(fulfillmentId, result.getFulfillmentId());
 
-        // Verify interactions
+        // Verify
         verify(trackingEventRepository, times(1)).findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId);
         verify(trackingEventRepository, times(1)).save(any(TrackingEvent.class));
     }
@@ -80,19 +79,18 @@ public class TrackingEventServiceImplTest {
         // Arrange
         TrackingEvent deliveredEvent = TrackingEvent.builder()
                 .fulfillmentId(fulfillmentId)
-                .eventType(EventType.DELIVERED) // The "Terminal" state
+                .eventType(EventType.DELIVERED)
                 .build();
 
         when(trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId))
                 .thenReturn(Optional.of(deliveredEvent));
 
         // Act & Assert
-        // We try to update to 'FAILED', but the service should block it because it's already 'DELIVERED'
         assertThrows(InvalidStateTransitionException.class, () -> {
             trackingEventService.recordEvent(fulfillmentId, EventType.FAILED, mockLocation, mockMetadata);
         });
 
-        // Verify that the save method was never reached
+        // Verify
         verify(trackingEventRepository, never()).save(any(TrackingEvent.class));
     }
 }
