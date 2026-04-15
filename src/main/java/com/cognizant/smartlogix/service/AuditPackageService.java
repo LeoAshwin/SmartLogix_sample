@@ -1,18 +1,21 @@
 package com.cognizant.smartlogix.service;
 
-import com.cognizant.smartlogix.model.data.AuditPackage;
+import com.cognizant.smartlogix.dto.OpsTrace.request.AuditPackageRequestDTO;
+import com.cognizant.smartlogix.dto.OpsTrace.response.AuditPackageResponseDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface AuditPackageService {
 
-    AuditPackage createAuditPackage(AuditPackage auditPackage);
+    AuditPackageResponseDTO create(AuditPackageRequestDTO dto);
 
-    List<AuditPackage> getAllAuditPackages();
+    List<AuditPackageResponseDTO> getAll();
 
-    AuditPackage getAuditPackageById(Long id);
+    AuditPackageResponseDTO getById(Long id);
 
-    // ✅ Dummy audit content
-    Map<String, Object> getAuditContents(Long packageId);
+    AuditPackageResponseDTO update(Long id, AuditPackageRequestDTO dto);
+
+    AuditPackageResponseDTO patch(Long id, AuditPackageRequestDTO dto);
+
+    void delete(Long id);
 }
