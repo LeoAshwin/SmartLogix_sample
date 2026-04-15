@@ -4,6 +4,8 @@ import com.cognizant.smartlogix.model.data.DriverStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,6 +18,8 @@ public class Driver {
 
     @Id
     @GeneratedValue
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "driver_id", columnDefinition = "char(36)")
     private UUID driverId;
 
     private String licenseNumber;

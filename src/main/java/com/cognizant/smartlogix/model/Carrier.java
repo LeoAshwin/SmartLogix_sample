@@ -4,6 +4,8 @@ import com.cognizant.smartlogix.model.data.CarrierStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -16,7 +18,9 @@ public class Carrier {
 
     @Id
     @GeneratedValue
-    private UUID carrierId;
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "carrier_id", columnDefinition = "char(36)")
+    private UUID carrier_id;
 
     private String name;
 
