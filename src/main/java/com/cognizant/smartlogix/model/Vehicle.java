@@ -5,6 +5,8 @@ import com.cognizant.smartlogix.model.data.VehicleType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -17,6 +19,8 @@ public class Vehicle {
 
     @Id
     @GeneratedValue
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "vehicle_id", columnDefinition = "char(36)")
     private UUID vehicleId;
 
     @Enumerated(EnumType.STRING)
