@@ -4,9 +4,6 @@ import com.cognizant.smartlogix.exception.pricing.ReturnNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.PricingRuleNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.CarrierBookingNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.CarrierSettlementNotFoundException;
-
-
-import com.cognizant.smartlogix.dto.Driver.response.ErrorResponse;
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
@@ -14,6 +11,7 @@ import com.cognizant.smartlogix.exception.manifest.CapacityExceededException;
 import com.cognizant.smartlogix.exception.manifest.InvalidRouteException;
 import com.cognizant.smartlogix.exception.manager.InvalidOrderException;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -22,18 +20,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+
 //@RestControllerAdvice  uses Aspect Oriented Programming
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // Helper method to keep your handler clean
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 
-    // 1. Handles State Conflicts (409 Conflict)
+    //(409 Conflict)
     @ExceptionHandler(InvalidStateTransitionException.class)
     public ResponseEntity<ErrorResponse> handleInvalidState(InvalidStateTransitionException ex, HttpServletRequest request) {
         log.warn("Business Logic Violation: {}", ex.getMessage());
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.CONFLICT, "State Error", ex.getMessage(), request);
     }
 
-    // 2. Handles Missing Data (404 Not Found)
+    // (404 Not Found)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
         log.error("Resource not found: {}", ex.getMessage());
@@ -88,14 +88,14 @@ public class GlobalExceptionHandler {
     }
 
     // Handles 405 Method Not Allowed
-    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(org.springframework.web.HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
         log.warn("HTTP Method Not Supported: {} at path {}", ex.getMethod(), request.getRequestURI());
         return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", ex.getMessage(), request);
     }
 
-    // Handles 404 for Static Resources (like favicon.ico)
-    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    // Handles 404 for Static Resources
+    @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex, HttpServletRequest request) {
         log.warn("Static resource not found: {} at path {}", ex.getResourcePath(), request.getRequestURI());
         return buildResponse(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "The requested static resource was not found", request);
@@ -124,10 +124,9 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 4. Catch-all for unexpected server errors (500 Internal Server Error)
+    //  (500 Internal Server Error)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
-        // Log the full stack trace for debugging
         log.error("Unexpected System Error at path: {}", request.getRequestURI(), ex);
 
         return buildResponse(
@@ -187,7 +186,7 @@ public class GlobalExceptionHandler {
                 request
         );
     }
-    // Handles validation errors for Order & Service Zone (400 Bad Request)
+
     @ExceptionHandler(InvalidOrderException.class)
     public ResponseEntity<ErrorResponse> handleInvalidOrder(
             InvalidOrderException ex,
@@ -203,7 +202,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 1. Handle the "Read-Only Lock" and "Invalid Sequence" errors
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Object> handleIllegalState(IllegalStateException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -215,7 +214,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    // 2. Handle "Manifest Not Found" errors
+
     @ExceptionHandler(com.cognizant.smartlogix.exception.manifest.EntityNotFoundException.class)
     public ResponseEntity<Object> handleNotFound(Exception ex) {
         Map<String, Object> body = new HashMap<>();
@@ -226,7 +225,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    // 3. NEW: Handle Logistics Business Rules (Capacity & Route issues)
+
     @ExceptionHandler({CapacityExceededException.class, InvalidRouteException.class})
     public ResponseEntity<Object> handleLogisticsBusinessErrors(Exception ex) {
         Map<String, Object> body = new HashMap<>();

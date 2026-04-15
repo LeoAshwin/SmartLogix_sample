@@ -19,7 +19,6 @@ import java.util.List;
 @Component
 public class ResponseMapper {
 
-    // --- Tracking Event Mapping ---
     public TrackingEventResponse toTrackingResponse(TrackingEvent event) {
         if (event == null) return null;
         return TrackingEventResponse.builder()
@@ -35,7 +34,7 @@ public class ResponseMapper {
         return events.stream().map(this::toTrackingResponse).collect(Collectors.toList());
     }
 
-    // --- POD Mapping ---
+
     public PodResponse toPodResponse(Pod pod) {
         if (pod == null) return null;
         return PodResponse.builder()
@@ -49,7 +48,7 @@ public class ResponseMapper {
                 .build();
     }
 
-    // --- Delivery Exception Mapping ---
+
     public ExceptionResponse toExceptionResponse(DeliveryException ex) {
         if (ex == null) return null;
         return ExceptionResponse.builder()
@@ -67,7 +66,7 @@ public class ResponseMapper {
         return exceptions.stream().map(this::toExceptionResponse).collect(Collectors.toList());
     }
 
-    // --- Return Mapping ---
+
     public ReturnResponse toReturnResponse(Return ret) {
         if (ret == null) return null;
 
@@ -90,7 +89,7 @@ public class ResponseMapper {
     }
 
 
-    // --- Pricing Rule Mapping ---
+
     public PricingRuleResponse toPricingRuleResponse(PricingRule rule) {
         if (rule == null) return null;
 
@@ -115,7 +114,7 @@ public class ResponseMapper {
     }
 
 
-    // --- Carrier Booking Mapping ---
+
     public CarrierBookingResponse toCarrierBookingResponse(
             CarrierBooking booking) {
 
@@ -142,7 +141,7 @@ public class ResponseMapper {
     }
 
 
-    // --- Carrier Settlement Mapping  ---
+
     public CarrierSettlementResponse toCarrierSettlementResponse(
             CarrierSettlement settlement) {
 

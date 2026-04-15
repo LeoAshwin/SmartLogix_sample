@@ -2,7 +2,7 @@
 package com.cognizant.smartlogix.service.impl;
 
 import com.cognizant.smartlogix.dto.Manager.ServiceZoneRequest;
-import com.cognizant.smartlogix.dto.Driver.response.ServiceZoneResponse;
+import com.cognizant.smartlogix.dto.Manager.ServiceZoneResponse;
 import com.cognizant.smartlogix.exception.manager.InvalidOrderException;
 import com.cognizant.smartlogix.model.ServiceZone;
 import com.cognizant.smartlogix.model.data.ServiceZoneStatus;

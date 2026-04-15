@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record TrackingEventRequest(
         @NotNull Long fulfillmentId,
         @NotNull EventType type,
-        @NotNull LocalDateTime timestamp, // The actual time the event happened offline
+        @NotNull LocalDateTime timestamp,
         LocationDetails location,
         TrackingMetadata metadata
 ) {}

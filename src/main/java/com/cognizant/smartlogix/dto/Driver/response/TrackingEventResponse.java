@@ -11,5 +11,5 @@ public record TrackingEventResponse(
         String timestamp,
         LocationDetails location
 ) {
-    // No @Data needed, and fields are no longer 'private'
+
 }

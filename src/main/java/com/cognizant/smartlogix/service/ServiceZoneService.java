@@ -2,7 +2,7 @@
 package com.cognizant.smartlogix.service;
 
 import com.cognizant.smartlogix.dto.Manager.ServiceZoneRequest;
-import com.cognizant.smartlogix.dto.Driver.response.ServiceZoneResponse;
+import com.cognizant.smartlogix.dto.Manager.ServiceZoneResponse;
 
 /**
  * Service interface for service zone management.

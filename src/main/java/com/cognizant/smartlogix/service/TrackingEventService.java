@@ -9,15 +9,12 @@ import java.util.List;
 
 public interface TrackingEventService {
 
-
     TrackingEvent recordEvent(Long fulfillmentId, EventType newType,
                               LocationDetails location, TrackingMetadata metadata);
 
     List<TrackingEvent> getHistoryByFulfillment(Long fulfillmentId);
 
     List<TrackingEvent> syncBatch(List<TrackingEventRequest> requests);
-
-
 
     TrackingEvent getLatestStatus(Long fulfillmentId);
 }

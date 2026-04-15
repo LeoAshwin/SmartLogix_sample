@@ -11,13 +11,10 @@ import java.util.Optional;
 @Repository
 public interface TrackingEventRepository extends JpaRepository<TrackingEvent, Long> {
 
-
     List<TrackingEvent> findByFulfillmentIdOrderByEventTimestampDesc(Long fulfillmentId);
-
 
     Optional<TrackingEvent> findFirstByFulfillmentIdOrderByEventTimestampDesc(Long fulfillmentId);
 
     Optional<TrackingEvent> findByFulfillmentIdAndEventTimestamp(Long fulfillmentId, LocalDateTime eventTimestamp);
-
 
 }

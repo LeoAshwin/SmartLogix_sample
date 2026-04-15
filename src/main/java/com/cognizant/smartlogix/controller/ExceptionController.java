@@ -52,7 +52,6 @@ public class ExceptionController {
 
     @GetMapping("/reasons")
     public ResponseEntity<List<String>> getValidReasonCodes() {
-        // This could return values from an Enum or a DB table
         return ResponseEntity.ok(exceptionService.getAvailableReasonCodes());
     }
 

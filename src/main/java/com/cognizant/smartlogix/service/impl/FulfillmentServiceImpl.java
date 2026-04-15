@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.service.impl;
 
 import com.cognizant.smartlogix.dto.Manager.FulfillmentRequest;
-import com.cognizant.smartlogix.dto.Driver.response.FulfillmentResponse;
+import com.cognizant.smartlogix.dto.Manager.FulfillmentResponse;
 import com.cognizant.smartlogix.exception.manager.InvalidOrderException;
 import com.cognizant.smartlogix.model.Fulfillment;
 import com.cognizant.smartlogix.model.data.FulfillmentStatus;

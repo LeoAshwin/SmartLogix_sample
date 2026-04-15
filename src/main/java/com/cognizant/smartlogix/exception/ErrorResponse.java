@@ -1,4 +1,4 @@
-package com.cognizant.smartlogix.dto.Driver.response;
+package com.cognizant.smartlogix.exception;
 
 import lombok.Builder;
 import java.time.LocalDateTime;

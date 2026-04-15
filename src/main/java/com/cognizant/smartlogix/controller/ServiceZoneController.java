@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.controller;
 
 import com.cognizant.smartlogix.dto.Manager.ServiceZoneRequest;
-import com.cognizant.smartlogix.dto.Driver.response.ServiceZoneResponse;
+import com.cognizant.smartlogix.dto.Manager.ServiceZoneResponse;
 import com.cognizant.smartlogix.service.ServiceZoneService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

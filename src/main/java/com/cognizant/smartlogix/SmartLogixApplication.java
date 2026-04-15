@@ -21,7 +21,6 @@ public class SmartLogixApplication {
         return args -> {
             logger.info("================================================");
             logger.info("SmartLogix Last-Mile Orchestration is STARTING");
-            logger.info("Modules 4.5 & 4.6 (Driver App & Exceptions) ACTIVE");
             logger.info("Base Package: com.cognizant.smartlogix");
             logger.info("================================================");
         };

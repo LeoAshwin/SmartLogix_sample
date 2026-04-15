@@ -13,5 +13,5 @@ public record ExceptionResponse(
         String raisedAt,
         String suggestedAction
 ) {
-    // No @Data or private fields allowed here
+
 }

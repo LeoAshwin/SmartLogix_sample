@@ -2,9 +2,11 @@ package com.cognizant.smartlogix.service.impl;
 
 
 import com.cognizant.smartlogix.dto.Driver.request.LocationDetails;
+import com.cognizant.smartlogix.dto.Driver.request.TrackingEventRequest;
 import com.cognizant.smartlogix.dto.Driver.request.TrackingMetadata;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import com.cognizant.smartlogix.model.TrackingEvent;
 import com.cognizant.smartlogix.model.data.EventType;
@@ -48,12 +50,9 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     @Override
     public List<TrackingEvent>   getHistoryByFulfillment(Long fulfillmentId) {
         List<TrackingEvent> history = trackingEventRepository.findByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId);
-
-
         if (history.isEmpty()) {
             throw new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId);
         }
-
         return history;
     }
 
@@ -63,16 +62,13 @@ public class TrackingEventServiceImpl implements TrackingEventService {
                 .orElseThrow(() -> new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId));
     }
 
-    // Add to TrackingEventServiceImpl.java
 
     @Override
     @Transactional
-    @io.micrometer.observation.annotation.Observed(name = "event.sync")
-    public List<TrackingEvent> syncBatch(List<com.cognizant.smartlogix.dto.Driver.request.TrackingEventRequest> requests) {
+    @Observed(name = "event.sync") //Micrometer Observation(creates metrics and traces)
+    public List<TrackingEvent> syncBatch(List<TrackingEventRequest> requests) {
         return requests.stream()
                 .map(req -> {
-                    // Check if this specific event already exists (Idempotency)
-                    // Using timestamp + fulfillmentId as a unique identifier for sync
                     return trackingEventRepository.findByFulfillmentIdAndEventTimestamp(
                                     req.fulfillmentId(), req.timestamp())
                             .orElseGet(() -> recordEvent(

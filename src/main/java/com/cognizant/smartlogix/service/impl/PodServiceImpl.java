@@ -49,9 +49,9 @@ public class PodServiceImpl implements PodService {
                 .deliveredBy(request.driverId())
                 .photoUrisJson(request.photoUris())
                 .signatureUri(request.signatureUri())
-                .quantityDelivered(request.quantityDelivered() != null ? request.quantityDelivered() : 1) // Changed
-                .notes(request.notes())                 // Changed
-                .checksumSha256(calculateSHA256(request.signatureUri())) // Changed
+                .quantityDelivered(request.quantityDelivered() != null ? request.quantityDelivered() : 1)
+                .notes(request.notes())
+                .checksumSha256(calculateSHA256(request.signatureUri()))
                 .build();
 
 

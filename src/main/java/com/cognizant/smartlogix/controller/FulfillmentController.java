@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.controller;
 
 import com.cognizant.smartlogix.dto.Manager.FulfillmentRequest;
-import com.cognizant.smartlogix.dto.Driver.response.FulfillmentResponse;
+import com.cognizant.smartlogix.dto.Manager.FulfillmentResponse;
 import com.cognizant.smartlogix.service.FulfillmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

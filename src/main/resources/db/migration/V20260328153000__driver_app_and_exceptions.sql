@@ -48,6 +48,16 @@ CREATE TABLE delivery_exception (
 
 
 
+
+
+
+
+
+
+
+
+
+
 -- -- 1. LINKING TRACKING EVENTS (Kamalesh) TO FULFILLMENT (Harini)
 -- ALTER TABLE tracking_event
 --     ADD CONSTRAINT fk_tracking_fulfillment

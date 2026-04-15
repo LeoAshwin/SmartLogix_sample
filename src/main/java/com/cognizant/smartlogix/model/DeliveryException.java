@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class DeliveryException {
 
-    @Id //primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // automatically generates id's'
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long exceptionId;
 
     @Column(nullable = false)
@@ -27,18 +27,18 @@ public class DeliveryException {
     private LocalDateTime raisedAt = LocalDateTime.now();
 
     @Column(nullable = false)
-    private Long raisedBy; // Driver who reported the failure
+    private Long raisedBy;
 
     @Column(nullable = false)
-    private String reasonCode; // e.g., CUSTOMER_UNAVAILABLE, DAMAGED
+    private String reasonCode;
 
     @Column(columnDefinition = "TEXT")
     private String details;
 
-    private String suggestedAction; // e.g., REATTEMPT, RETURN_TO_HUB
+    private String suggestedAction;
 
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus status= DeliveryStatus.OPEN; // [Open/Resolved/Escalated]
+    private DeliveryStatus status= DeliveryStatus.OPEN;
 
-    private Integer retryCount = 0; // To support reattempt rules
+    private Integer retryCount = 0;
 }
