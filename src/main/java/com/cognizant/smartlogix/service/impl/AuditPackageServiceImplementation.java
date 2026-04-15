@@ -1,13 +1,15 @@
 package com.cognizant.smartlogix.service.impl;
 
+import com.cognizant.smartlogix.dto.OpsTrace.request.AuditPackageRequestDTO;
+import com.cognizant.smartlogix.dto.OpsTrace.response.AuditPackageResponseDTO;
 import com.cognizant.smartlogix.exception.OpsTrace.AuditPackageNotFoundException;
-import com.cognizant.smartlogix.model.data.AuditPackage;
-import com.cognizant.smartlogix.service.AuditPackageService;
+import com.cognizant.smartlogix.model.AuditPackage;
 import com.cognizant.smartlogix.repository.AuditPackageRepository;
+import com.cognizant.smartlogix.service.AuditPackageService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AuditPackageServiceImplementation
@@ -15,51 +17,83 @@ public class AuditPackageServiceImplementation
 
     private final AuditPackageRepository repository;
 
-    public AuditPackageServiceImplementation(
-            AuditPackageRepository repository) {
+    public AuditPackageServiceImplementation(AuditPackageRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public AuditPackage createAuditPackage(AuditPackage auditPackage) {
+    public AuditPackageResponseDTO create(AuditPackageRequestDTO dto) {
 
-        // ✅ Dummy audit content populated here
-        auditPackage.setContentsJson("""
-            {
-              "totalDeliveries": 200,
-              "successfulDeliveries": 190,
-              "failedDeliveries": 10,
-              "exceptionsLogged": 5,
-              "regulatoryValidated": true
-            }
-        """);
+        AuditPackage ap = new AuditPackage();
+        ap.setPeriodStart(dto.periodStart());
+        ap.setPeriodEnd(dto.periodEnd());
+        ap.setContentsJson(dto.contentsJson());
+        ap.setPackageUri(dto.packageUri());
+        ap.setGeneratedAt(LocalDateTime.now());
 
-        return repository.save(auditPackage);
+        return toResponse(repository.save(ap));
     }
 
     @Override
-    public List<AuditPackage> getAllAuditPackages() {
-        return repository.findAll();
+    public List<AuditPackageResponseDTO> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @Override
-    public AuditPackage getAuditPackageById(Long id) {
+    public AuditPackageResponseDTO getById(Long id) {
+        return toResponse(find(id));
+    }
+
+    @Override
+    public AuditPackageResponseDTO update(Long id, AuditPackageRequestDTO dto) {
+
+        AuditPackage ap = find(id);
+        ap.setPeriodStart(dto.periodStart());
+        ap.setPeriodEnd(dto.periodEnd());
+        ap.setContentsJson(dto.contentsJson());
+        ap.setPackageUri(dto.packageUri());
+
+        return toResponse(repository.save(ap));
+    }
+
+    @Override
+    public AuditPackageResponseDTO patch(Long id, AuditPackageRequestDTO dto) {
+
+        AuditPackage ap = find(id);
+
+        if (dto.periodStart() != null)
+            ap.setPeriodStart(dto.periodStart());
+        if (dto.periodEnd() != null)
+            ap.setPeriodEnd(dto.periodEnd());
+        if (dto.contentsJson() != null)
+            ap.setContentsJson(dto.contentsJson());
+        if (dto.packageUri() != null)
+            ap.setPackageUri(dto.packageUri());
+
+        return toResponse(repository.save(ap));
+    }
+
+    @Override
+    public void delete(Long id) {
+        repository.delete(find(id));
+    }
+
+    private AuditPackage find(Long id) {
         return repository.findById(id)
-                .orElseThrow(() ->
-                        new AuditPackageNotFoundException(id));
+                .orElseThrow(() -> new AuditPackageNotFoundException(id));
     }
 
-    @Override
-    public Map<String, Object> getAuditContents(Long packageId) {
-
-        // ✅ Dummy content (replace later with real analytics)
-        return Map.of(
-                "auditPackageId", packageId,
-                "totalDeliveries", 200,
-                "successfulDeliveries", 190,
-                "failedDeliveries", 10,
-                "exceptions", 5,
-                "auditPassed", true
+    private AuditPackageResponseDTO toResponse(AuditPackage ap) {
+        return new AuditPackageResponseDTO(
+                ap.getPackageId(),
+                ap.getPeriodStart(),
+                ap.getPeriodEnd(),
+                ap.getContentsJson(),
+                ap.getGeneratedAt(),
+                ap.getPackageUri()
         );
     }
 }

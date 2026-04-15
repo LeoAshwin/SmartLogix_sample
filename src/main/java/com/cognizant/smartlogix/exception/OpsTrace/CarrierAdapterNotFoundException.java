@@ -1,9 +1,10 @@
 package com.cognizant.smartlogix.exception.OpsTrace;
 
-public class CarrierAdapterNotFoundException
-        extends RuntimeException {
+import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
+
+public class CarrierAdapterNotFoundException extends ResourceNotFoundException {
 
     public CarrierAdapterNotFoundException(Long id) {
-        super("Carrier adapter not found with id: " + id);
+        super("Carrier Adapter not found with id: " + id);
     }
 }

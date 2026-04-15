@@ -4,8 +4,6 @@ import com.cognizant.smartlogix.exception.pricing.ReturnNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.PricingRuleNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.CarrierBookingNotFoundException;
 import com.cognizant.smartlogix.exception.pricing.CarrierSettlementNotFoundException;
-
-
 import com.cognizant.smartlogix.exception.driver.IntegrityCheckException;
 import com.cognizant.smartlogix.exception.driver.InvalidStateTransitionException;
 import com.cognizant.smartlogix.exception.driver.ResourceNotFoundException;
@@ -31,6 +29,7 @@ import java.util.stream.Collectors;
 
 
 
+//@RestControllerAdvice  uses Aspect Oriented Programming
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

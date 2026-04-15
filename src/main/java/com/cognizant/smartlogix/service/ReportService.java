@@ -1,18 +1,21 @@
 package com.cognizant.smartlogix.service;
 
-import com.cognizant.smartlogix.model.data.Report;
+import com.cognizant.smartlogix.dto.OpsTrace.request.ReportRequestDTO;
+import com.cognizant.smartlogix.dto.OpsTrace.response.ReportResponseDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ReportService {
 
-    Report createReport(Report report);
+    ReportResponseDTO create(ReportRequestDTO dto);
 
-    List<Report> getAllReports();
+    List<ReportResponseDTO> getAll();
 
-    Report getReportById(Long id);
+    ReportResponseDTO getById(Long id);
 
-    // ✅ NEW — Dummy Report Metrics
-    Map<String, Object> getReportMetrics(Long reportId);
+    ReportResponseDTO update(Long id, ReportRequestDTO dto);
+
+    ReportResponseDTO patch(Long id, ReportRequestDTO dto);
+
+    void delete(Long id);
 }
