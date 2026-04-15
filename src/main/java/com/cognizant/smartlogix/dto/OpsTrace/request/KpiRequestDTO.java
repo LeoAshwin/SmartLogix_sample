@@ -1,10 +1,14 @@
-
-
 package com.cognizant.smartlogix.dto.OpsTrace.request;
 
+import java.math.BigDecimal;
+
+/**
+ * Immutable request DTO for KPI.
+ */
 public record KpiRequestDTO(
         String name,
-        String value,
-        String unit,
-        String recordedAt
-) {}
+        String definition,
+        BigDecimal target,
+        String reportingPeriod
+) {
+}

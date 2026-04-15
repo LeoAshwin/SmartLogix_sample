@@ -1,18 +1,24 @@
 package com.cognizant.smartlogix.service;
 
-import com.cognizant.smartlogix.model.data.Kpi;
+import com.cognizant.smartlogix.dto.OpsTrace.request.KpiRequestDTO;
+import com.cognizant.smartlogix.dto.OpsTrace.response.KpiResponseDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface KpiService {
 
-    Kpi createKpi(Kpi kpi);
+    KpiResponseDTO create(KpiRequestDTO dto);
 
-    List<Kpi> getAllKpis();
+    List<KpiResponseDTO> getAll();
 
-    Kpi getKpiById(Long id);
+    KpiResponseDTO getById(Long id);
 
-    // ✅ NEW — Dummy KPI computation
-    Map<String, Object> getComputedKpis();
+    KpiResponseDTO update(Long id, KpiRequestDTO dto);
+
+    KpiResponseDTO patch(Long id, KpiRequestDTO dto);
+
+    void delete(Long id);
+
+    Map<String, Object> getDashboard();
 }
