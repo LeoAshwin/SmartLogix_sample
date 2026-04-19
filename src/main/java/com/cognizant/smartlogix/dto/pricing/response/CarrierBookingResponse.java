@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 public record CarrierBookingResponse(
         Long carrierBookingId,
-        Long carrierId,
-        Long fulfillmentId,
+        String carrierId,
+        String fulfillmentId,
         String externalRef,
         LocalDateTime bookedAt,
         String status,

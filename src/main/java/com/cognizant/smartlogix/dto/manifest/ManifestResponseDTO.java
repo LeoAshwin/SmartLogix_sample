@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ManifestResponseDTO(
         Long manifestId,
-        Long vehicleId,
+        String vehicleId,
         String status,
         String scheduledDate,
         List<StopDTO> stops,

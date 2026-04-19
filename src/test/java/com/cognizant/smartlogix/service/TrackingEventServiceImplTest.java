@@ -32,13 +32,13 @@ public class TrackingEventServiceImplTest {
     @InjectMocks
     private TrackingEventServiceImpl trackingEventService;
 
-    private Long fulfillmentId;
+    private String fulfillmentId;
     private LocationDetails mockLocation;
     private TrackingMetadata mockMetadata;
 
     @BeforeEach
     void setUp() {
-        fulfillmentId = 101L;
+        fulfillmentId = "F-101";
         mockLocation = new LocationDetails(12.9716, 77.5946, "123 SmartLogix St");
         mockMetadata = new TrackingMetadata("DEV-99", "85", false, "4G", "Normal");
     }

@@ -36,7 +36,7 @@ public class PodServiceImplTest {
     private PodServiceImpl podService;
 
     private PodSubmissionRequest request;
-    private Long fulfillmentId = 500L;
+    private String fulfillmentId = "F-500";
 
     @BeforeEach
     void setUp() {
@@ -46,7 +46,7 @@ public class PodServiceImplTest {
 
         request = new PodSubmissionRequest(
                 fulfillmentId,
-                123L,
+                "D-123",
                 List.of("uri1.jpg"),
                 "signature-string-data",
                 5,

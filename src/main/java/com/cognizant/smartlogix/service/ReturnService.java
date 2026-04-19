@@ -11,5 +11,5 @@ public interface ReturnService {
 
     ReturnResponse getReturnById(Long returnId);
 
-    List<ReturnResponse> getReturnsByFulfillmentId(Long fulfillmentId);
+    List<ReturnResponse> getReturnsByFulfillmentId(String fulfillmentId);
 }

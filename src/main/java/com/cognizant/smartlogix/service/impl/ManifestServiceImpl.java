@@ -128,7 +128,7 @@ public class ManifestServiceImpl implements ManifestService {
 
     @Override
     @Transactional
-    public ManifestResponseDTO markStopAsCompleted(Long manifestId, Long fulfillmentId) {
+    public ManifestResponseDTO markStopAsCompleted(Long manifestId, String fulfillmentId) {
         Manifest manifest = findManifest(manifestId);
 
         if ("COMPLETED".equals(manifest.getStatus())) {
@@ -323,9 +323,9 @@ public class ManifestServiceImpl implements ManifestService {
 
     @Override public List<ManifestResponseDTO> getManifestsByStatus(String s) { return manifestRepository.findByStatus(s).stream().map(this::mapToResponseDTO).toList(); }
 
-    @Override public List<ManifestResponseDTO> getManifestsByVehicle(Long v) { return manifestRepository.findByVehicleId(v).stream().map(this::mapToResponseDTO).toList(); }
+    @Override public List<ManifestResponseDTO> getManifestsByVehicle(String v) { return manifestRepository.findByVehicleId(v).stream().map(this::mapToResponseDTO).toList(); }
 
-    @Override public List<ManifestResponseDTO> searchManifests(String s, Long d, LocalDate dt) {
+    @Override public List<ManifestResponseDTO> searchManifests(String s, String d, LocalDate dt) {
         List<Manifest> m = (s != null) ? manifestRepository.findByStatus(s) : (dt != null) ? manifestRepository.findByDate(dt) : (d != null) ? manifestRepository.findByDriverId(d) : manifestRepository.findAll();
         return m.stream().map(this::mapToResponseDTO).toList();
     }

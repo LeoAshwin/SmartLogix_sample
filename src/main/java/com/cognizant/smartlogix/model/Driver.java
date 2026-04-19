@@ -22,6 +22,12 @@ public class Driver {
     @Column(name = "driver_id", columnDefinition = "char(36)")
     private UUID driverId;
 
+    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
+    private User user;
+
     private String licenseNumber;
     private String phone;
 

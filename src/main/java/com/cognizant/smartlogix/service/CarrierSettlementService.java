@@ -12,5 +12,5 @@ public interface CarrierSettlementService {
             CarrierSettlementCreateRequest request);
 
 
-    List<CarrierSettlementResponse> getCarrierSettlements(Long carrierId);
+    List<CarrierSettlementResponse> getCarrierSettlements(String carrierId);
 }

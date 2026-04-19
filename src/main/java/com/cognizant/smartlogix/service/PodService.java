@@ -10,7 +10,7 @@ public interface PodService {
 
     Pod submitPod(PodSubmissionRequest request);
 
-    Optional<Pod> getPodByFulfillment(Long fulfillmentId);
+    Optional<Pod> getPodByFulfillment(String fulfillmentId);
 
     boolean verifyPodIntegrity(Long podId);
 }

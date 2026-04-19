@@ -22,12 +22,14 @@ public class DeliveryException {
     private Long exceptionId;
 
     @Column(nullable = false)
-    private Long fulfillmentId;
+    private String fulfillmentId;
+
 
     private LocalDateTime raisedAt = LocalDateTime.now();
 
     @Column(nullable = false)
-    private Long raisedBy;
+    private String raisedBy;
+
 
     @Column(nullable = false)
     private String reasonCode;

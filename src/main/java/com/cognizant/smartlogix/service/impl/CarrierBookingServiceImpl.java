@@ -40,7 +40,7 @@ public class CarrierBookingServiceImpl implements CarrierBookingService {
     }
 
     @Override
-    public List<CarrierBookingResponse> getCarrierBookings(Long carrierId) {
+    public List<CarrierBookingResponse> getCarrierBookings(String carrierId) {
         return carrierBookingRepository.findByCarrierId(carrierId)
                 .stream()
                 .map(this::map)

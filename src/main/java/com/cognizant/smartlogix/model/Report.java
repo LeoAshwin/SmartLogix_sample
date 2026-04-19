@@ -31,4 +31,10 @@ public class Report {
 
     @Column(name = "report_uri")
     private String reportUri;
+
+    @Column(name = "generated_by_fk")
+    private Long generatedByFk;
+
+    public Long getGeneratedByFk() { return generatedByFk; }
+    public void setGeneratedByFk(Long generatedByFk) { this.generatedByFk = generatedByFk; }
 }

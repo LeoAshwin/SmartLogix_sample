@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record TrackingEventResponse(
         Long eventId,
-        Long fulfillmentId,
+        String fulfillmentId,
         String eventType,
         String timestamp,
         LocationDetails location

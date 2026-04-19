@@ -13,7 +13,8 @@ public class Return {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long returnId;
 
-    private Long fulfillmentId;
+    private String fulfillmentId;
+
 
     private String returnLabelUri;
 
@@ -40,11 +41,11 @@ public class Return {
         this.returnId = returnId;
     }
 
-    public Long getFulfillmentId() {
+    public String getFulfillmentId() {
         return fulfillmentId;
     }
 
-    public void setFulfillmentId(Long fulfillmentId) {
+    public void setFulfillmentId(String fulfillmentId) {
         this.fulfillmentId = fulfillmentId;
     }
 

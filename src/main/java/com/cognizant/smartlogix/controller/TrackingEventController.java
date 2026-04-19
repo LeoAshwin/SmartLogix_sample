@@ -30,7 +30,7 @@ public class TrackingEventController {
 
     @PostMapping("/{fulfillmentId}")
     public ResponseEntity<TrackingEventResponse> recordEvent(
-            @PathVariable Long fulfillmentId,
+            @PathVariable String fulfillmentId,
             @RequestParam EventType type,
             @RequestBody(required = false) LocationDetails location,
             @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
@@ -56,7 +56,7 @@ public class TrackingEventController {
     }
 
     @GetMapping("/{fulfillmentId}/history")
-    public ResponseEntity<List<TrackingEventResponse>> getHistory(@PathVariable Long fulfillmentId) {
+    public ResponseEntity<List<TrackingEventResponse>> getHistory(@PathVariable String fulfillmentId) {
         List<TrackingEvent> history = trackingEventService.getHistoryByFulfillment(fulfillmentId);
         return ResponseEntity.ok(mapper.toTrackingResponseList(history));
     }

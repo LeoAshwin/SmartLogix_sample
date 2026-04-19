@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  */
 public record FulfillmentRequest(
         String orderId,
-        String merchantId,
+        Long merchantId,
         String serviceZoneId,
         String serviceLevel,
         Double packageWeightKg,

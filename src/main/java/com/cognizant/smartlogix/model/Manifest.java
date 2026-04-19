@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Manifest")
+@Table(name = "Manifest", indexes = {@Index(columnList = "ManifestID, Date")})
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,10 +25,11 @@ public class Manifest {
     private Long depotId;
 
     @Column(name = "`VehicleID`")
-    private Long vehicleId;
+    private String vehicleId;
 
     @Column(name = "`DriverID`")
-    private Long driverId;
+    private String driverId;
+
 
     @Column(name = "`Date`")
     private LocalDate date;

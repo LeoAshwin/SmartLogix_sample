@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record ExceptionResponse(
         Long exceptionId,
-        Long fulfillmentId,
+        String fulfillmentId,
         String reasonCode,
         DeliveryStatus status,
         int retryCount,

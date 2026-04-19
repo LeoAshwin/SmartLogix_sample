@@ -18,7 +18,8 @@ public class CarrierAdapter {
     private Long adapterId;
 
     @Column(name = "carrier_id", nullable = false)
-    private Long carrierId;
+    private String carrierId;
+
 
     @Column(name = "protocol", nullable = false)
     private String protocol; // REST | FTP | CUSTOM

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "tracking_event")
+@Table(name = "tracking_event", indexes = {@Index(columnList = "fulfillmentId, eventTimestamp")})
 @Data
 @Builder
 @AllArgsConstructor
@@ -26,7 +26,8 @@ public class TrackingEvent {
     private Long eventId;
 
     @Column(nullable = false)
-    private Long fulfillmentId;
+    private String fulfillmentId;
+
 
 
     @Enumerated(EnumType.STRING)

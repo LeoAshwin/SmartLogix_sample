@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record ExceptionReportRequest(
         @NotNull(message = "Fulfillment ID is required")
-        Long fulfillmentId,
+        String fulfillmentId,
 
         @NotNull(message = "Driver ID is required")
-        Long driverId,
+        String driverId,
 
         @NotBlank(message = "Reason code cannot be empty")
         String reasonCode,

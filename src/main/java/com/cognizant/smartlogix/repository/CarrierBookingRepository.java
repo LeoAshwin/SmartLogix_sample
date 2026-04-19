@@ -8,5 +8,5 @@ import java.util.List;
 public interface CarrierBookingRepository
         extends JpaRepository<CarrierBooking, Long> {
 
-    List<CarrierBooking> findByCarrierId(Long carrierId);
+    List<CarrierBooking> findByCarrierId(String carrierId);
 }

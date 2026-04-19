@@ -26,7 +26,7 @@ public class TrackingEventServiceImpl implements TrackingEventService {
 
     @Override
     @Transactional
-    public TrackingEvent recordEvent(Long fulfillmentId, EventType newType,
+    public TrackingEvent recordEvent(String fulfillmentId, EventType newType,
                                      LocationDetails location, TrackingMetadata metadata) {
 
         trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId)
@@ -48,7 +48,7 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     }
 
     @Override
-    public List<TrackingEvent>   getHistoryByFulfillment(Long fulfillmentId) {
+    public List<TrackingEvent>   getHistoryByFulfillment(String fulfillmentId) {
         List<TrackingEvent> history = trackingEventRepository.findByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId);
         if (history.isEmpty()) {
             throw new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId);
@@ -57,7 +57,7 @@ public class TrackingEventServiceImpl implements TrackingEventService {
     }
 
     @Override
-    public TrackingEvent getLatestStatus(Long fulfillmentId) {
+    public TrackingEvent getLatestStatus(String fulfillmentId) {
         return trackingEventRepository.findFirstByFulfillmentIdOrderByEventTimestampDesc(fulfillmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("No tracking history found for Fulfillment ID: " + fulfillmentId));
     }

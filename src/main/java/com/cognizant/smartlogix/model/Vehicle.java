@@ -23,6 +23,8 @@ public class Vehicle {
     @Column(name = "vehicle_id", columnDefinition = "char(36)")
     private UUID vehicleId;
 
+    private Long fleetId;
+
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 

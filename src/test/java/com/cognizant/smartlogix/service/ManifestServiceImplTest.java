@@ -44,8 +44,8 @@ public class ManifestServiceImplTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        order1 = new OrderInputDTO(1001L, 13.0827, 80.2707, 50.0, LocalDateTime.now());
-        sampleRequest = new ManifestRequestDTO(101L, 5001L, 99L, LocalDate.now(), 500.0, 30.0, List.of(order1));
+        order1 = new OrderInputDTO("F-1001", 13.0827, 80.2707, 50.0, LocalDateTime.now());
+        sampleRequest = new ManifestRequestDTO(101L, "V-5001", "D-99", LocalDate.now(), 500.0, 30.0, List.of(order1));
 
         // Global stubs to prevent NPE
         lenient().when(objectMapper.writeValueAsString(any())).thenReturn("[]");
@@ -80,7 +80,7 @@ public class ManifestServiceImplTest {
                 .build();
 
         // 2. Setup the Stop (Crucial: Use the same ID you pass to the service)
-        StopDTO stop = new StopDTO(1001L, 1, "08:30", "Weight: 10kg", 13.0, 80.0, "PENDING", null);
+        StopDTO stop = new StopDTO("F-1001", 1, "08:30", "Weight: 10kg", 13.0, 80.0, "PENDING", null);
 
         // We need a MUTABLE list because the service tries to set/update elements
         List<StopDTO> mutableStops = new ArrayList<>();
@@ -101,7 +101,7 @@ public class ManifestServiceImplTest {
         when(manifestRepository.save(any(Manifest.class))).thenAnswer(i -> i.getArgument(0));
 
         // 4. Execute
-        ManifestResponseDTO response = manifestService.markStopAsCompleted(1L, 1001L);
+        ManifestResponseDTO response = manifestService.markStopAsCompleted(1L, "F-1001");
 
         // 5. Assert
         assertEquals("COMPLETED", response.status(), "Manifest status should flip to COMPLETED because all stops (1/1) are done.");
@@ -110,8 +110,8 @@ public class ManifestServiceImplTest {
     @Test
     @DisplayName("Validation Test: Invalid Coordinates")
     void testCoordinateValidation() {
-        OrderInputDTO badOrder = new OrderInputDTO(102L, 95.0, 190.0, 10.0, LocalDateTime.now());
-        ManifestRequestDTO badRequest = new ManifestRequestDTO(1L, 1L, 1L, LocalDate.now(), 100.0, 30.0, List.of(badOrder));
+        OrderInputDTO badOrder = new OrderInputDTO("F-102", 95.0, 190.0, 10.0, LocalDateTime.now());
+        ManifestRequestDTO badRequest = new ManifestRequestDTO(1L, "V-1", "D-1", LocalDate.now(), 100.0, 30.0, List.of(badOrder));
         assertThrows(IllegalArgumentException.class, () -> manifestService.generateDeterministicManifest(badRequest));
     }
 
@@ -126,7 +126,7 @@ public class ManifestServiceImplTest {
     @Test
     @DisplayName("Business Test: Capacity")
     void testCapacityConstraint() throws Exception {
-        ManifestRequestDTO lowCapRequest = new ManifestRequestDTO(1L, 1L, 1L, LocalDate.now(), 1.0, 30.0, List.of(order1));
+        ManifestRequestDTO lowCapRequest = new ManifestRequestDTO(1L, "V-1", "D-1", LocalDate.now(), 1.0, 30.0, List.of(order1));
         when(manifestRepository.save(any(Manifest.class))).thenAnswer(i -> i.getArgument(0));
         ManifestResponseDTO response = manifestService.generateDeterministicManifest(lowCapRequest);
         assertEquals(0, response.stops().size());

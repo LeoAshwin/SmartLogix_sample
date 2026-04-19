@@ -39,8 +39,8 @@ public class RouteLegServiceImplTest {
         stopsJson = "[{\"fulfillmentId\":101}, {\"fulfillmentId\":102}]";
 
         // Creating two stops to form one "Leg"
-        StopDTO s1 = new StopDTO(101L, 1, "08:00", "Fragile", 13.0067, 80.2206, "PENDING", null);
-        StopDTO s2 = new StopDTO(102L, 2, "09:00", "Normal", 13.0827, 80.2707, "PENDING", null);
+        StopDTO s1 = new StopDTO("F-101", 1, "08:00", "Fragile", 13.0067, 80.2206, "PENDING", null);
+        StopDTO s2 = new StopDTO("F-102", 2, "09:00", "Normal", 13.0827, 80.2707, "PENDING", null);
         stops = List.of(s1, s2);
     }
 

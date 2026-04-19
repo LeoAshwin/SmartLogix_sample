@@ -57,14 +57,14 @@ public class ManifestController {
     @PostMapping("/{manifestId}/stops/{fulfillmentId}/complete")
     public ResponseEntity<ManifestResponseDTO> completeStop(
             @PathVariable Long manifestId,
-            @PathVariable Long fulfillmentId) {
+            @PathVariable String fulfillmentId) {
         return ResponseEntity.ok(manifestService.markStopAsCompleted(manifestId, fulfillmentId));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<ManifestResponseDTO>> search(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) Long driverId,
+            @RequestParam(required = false) String driverId,
             @RequestParam(required = false) LocalDate date) {
         return ResponseEntity.ok(manifestService.searchManifests(status, driverId, date));
     }
@@ -94,7 +94,7 @@ public class ManifestController {
 
     // Uses getManifestsByVehicle
     @GetMapping("/vehicle/{vehicleId}")
-    public ResponseEntity<List<ManifestResponseDTO>> getByVehicle(@PathVariable Long vehicleId) {
+    public ResponseEntity<List<ManifestResponseDTO>> getByVehicle(@PathVariable String vehicleId) {
         return ResponseEntity.ok(manifestService.getManifestsByVehicle(vehicleId));
     }
 

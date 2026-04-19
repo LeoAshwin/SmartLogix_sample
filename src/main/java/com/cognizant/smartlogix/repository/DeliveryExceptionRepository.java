@@ -12,7 +12,7 @@ public interface DeliveryExceptionRepository extends JpaRepository<DeliveryExcep
 
     List<DeliveryException> findByStatusOrderByRaisedAtDesc(DeliveryStatus status);
 
-    List<DeliveryException> findByFulfillmentIdOrderByRaisedAtDesc(Long fulfillmentId);
+    List<DeliveryException> findByFulfillmentIdOrderByRaisedAtDesc(String fulfillmentId);
 
     @Query("SELECT e FROM DeliveryException e WHERE e.status = :status AND e.retryCount >= :threshold")
     List<DeliveryException> findHighRiskExceptions(DeliveryStatus status, int threshold);

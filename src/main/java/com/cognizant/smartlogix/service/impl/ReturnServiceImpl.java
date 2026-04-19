@@ -39,7 +39,7 @@ public class ReturnServiceImpl implements ReturnService {
     }
 
     @Override
-    public List<ReturnResponse> getReturnsByFulfillmentId(Long fulfillmentId) {
+    public List<ReturnResponse> getReturnsByFulfillmentId(String fulfillmentId) {
         return returnRepository.findByFulfillmentId(fulfillmentId)
                 .stream()
                 .map(this::map)

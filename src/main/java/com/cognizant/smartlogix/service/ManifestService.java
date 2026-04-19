@@ -19,9 +19,9 @@ public interface ManifestService {
 
     ManifestResponseDTO startTrip(Long manifestId);
 
-    ManifestResponseDTO markStopAsCompleted(Long manifestId, Long fulfillmentId);
+    ManifestResponseDTO markStopAsCompleted(Long manifestId, String fulfillmentId);
 
-    List<ManifestResponseDTO> searchManifests(String status, Long driverId, LocalDate date);
+    List<ManifestResponseDTO> searchManifests(String status, String driverId, LocalDate date);
 
     void cancelManifest(Long manifestId);
 
@@ -31,5 +31,5 @@ public interface ManifestService {
 
     List<ManifestResponseDTO> getManifestsByStatus(String status);
 
-    List<ManifestResponseDTO> getManifestsByVehicle(Long vehicleId);
+    List<ManifestResponseDTO> getManifestsByVehicle(String vehicleId);
 }

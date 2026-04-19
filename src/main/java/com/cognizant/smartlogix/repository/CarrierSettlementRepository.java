@@ -8,5 +8,5 @@ import java.util.List;
 public interface CarrierSettlementRepository
         extends JpaRepository<CarrierSettlement, Long> {
 
-    List<CarrierSettlement> findByCarrierId(Long carrierId);
+    List<CarrierSettlement> findByCarrierId(String carrierId);
 }

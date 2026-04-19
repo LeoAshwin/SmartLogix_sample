@@ -31,7 +31,7 @@ public class CarrierSettlementController {
 
     @GetMapping("/{carrierId}/settlements")
     public ResponseEntity<List<CarrierSettlementResponse>> getCarrierSettlements(
-            @PathVariable Long carrierId) {
+            @PathVariable String carrierId) {
 
         return ResponseEntity.ok(
                 carrierSettlementService.getCarrierSettlements(carrierId));

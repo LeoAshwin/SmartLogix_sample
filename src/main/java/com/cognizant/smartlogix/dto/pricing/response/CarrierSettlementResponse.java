@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public record CarrierSettlementResponse(
         Long settleId,
-        Long carrierId,
+        String carrierId,
         LocalDateTime periodStart,
         LocalDateTime periodEnd,
         BigDecimal grossBilled,

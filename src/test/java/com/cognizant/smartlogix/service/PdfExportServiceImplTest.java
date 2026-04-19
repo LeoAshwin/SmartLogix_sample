@@ -22,15 +22,13 @@ public class PdfExportServiceImplTest {
 
         // Setup a mock stop
         StopDTO stop = new StopDTO(
-                1001L, 1, "2026-04-10T09:00",
-                "Fragile", 13.0827, 80.2707, "PENDING", null
-        );
+                "F-1001", 1, "2026-04-10T09:00",
+                "Fragile", 13.0827, 80.2707, "PENDING", null);
 
         // Setup the DTO
         sampleManifest = new ManifestResponseDTO(
-                1L, 5001L, "OPTIMIZED", "2026-04-10",
-                List.of(stop), 24.1, "0h 53m"
-        );
+                1L, "V-5001", "OPTIMIZED", "2026-04-10",
+                List.of(stop), 24.1, "0h 53m");
     }
 
     @Test
@@ -52,9 +50,8 @@ public class PdfExportServiceImplTest {
     @DisplayName("PDF Test: Handle manifest with zero stops")
     void testGeneratePdfWithEmptyStops() {
         ManifestResponseDTO emptyManifest = new ManifestResponseDTO(
-                2L, 5002L, "CANCELLED", "2026-04-10",
-                new ArrayList<>(), 0.0, "0h 0m"
-        );
+                2L, "V-5002", "CANCELLED", "2026-04-10",
+                new ArrayList<>(), 0.0, "0h 0m");
 
         // Should not throw exception even if stops are empty
         byte[] pdfBytes = pdfExportService.generateManifestPdf(emptyManifest);
@@ -67,14 +64,14 @@ public class PdfExportServiceImplTest {
     @DisplayName("PDF Test: Handle null stop list")
     void testGeneratePdfWithNullStops() {
         ManifestResponseDTO nullStopsManifest = new ManifestResponseDTO(
-                3L, 5003L, "ERROR", "2026-04-10",
-                null, 0.0, "0h 0m"
-        );
+                3L, "V-5003", "ERROR", "2026-04-10",
+                null, 0.0, "0h 0m");
 
-        // We expect a NullPointerException because the for-each loop in service
-        // will try to iterate over the null list.
-        assertThrows(NullPointerException.class, () -> {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
             pdfExportService.generateManifestPdf(nullStopsManifest);
         });
+
+        // Optional but best practice
+        assertTrue(ex.getCause() instanceof NullPointerException);
     }
 }

@@ -11,5 +11,5 @@ public interface CarrierBookingService {
     CarrierBookingResponse createBooking(
             CarrierBookingCreateRequest request);
 
-    List<CarrierBookingResponse> getCarrierBookings(Long carrierId);
+    List<CarrierBookingResponse> getCarrierBookings(String carrierId);
 }

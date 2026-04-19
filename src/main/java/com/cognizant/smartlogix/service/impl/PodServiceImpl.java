@@ -65,7 +65,7 @@ public class PodServiceImpl implements PodService {
         return podRepository.save(pod);
     }
     @Override
-    public Optional<Pod> getPodByFulfillment(Long fulfillmentId) {
+    public Optional<Pod> getPodByFulfillment(String fulfillmentId) {
         return podRepository.findByFulfillmentId(fulfillmentId);
     }
 

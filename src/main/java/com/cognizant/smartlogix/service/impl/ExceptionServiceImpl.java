@@ -25,7 +25,7 @@ public class ExceptionServiceImpl implements ExceptionService {
 
     @Override
     @Transactional
-    public DeliveryException reportException(Long fulfillmentId, Long driverId,
+    public DeliveryException reportException(String fulfillmentId, String driverId,
                                              String reasonCode, String details) {
 
 

@@ -6,7 +6,7 @@ import java.util.List;
 @Builder
 public record PodResponse(
         Long podId,
-        Long fulfillmentId,
+        String fulfillmentId,
         String status,
         String deliveredAt,
         List<String> photoUris,

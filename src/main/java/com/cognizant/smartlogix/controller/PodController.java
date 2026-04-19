@@ -33,7 +33,7 @@ public class PodController {
     }
 
     @GetMapping("/fulfillment/{fulfillmentId}")
-    public ResponseEntity<PodResponse> getPod(@PathVariable Long fulfillmentId) {
+    public ResponseEntity<PodResponse> getPod(@PathVariable String fulfillmentId) {
         return podService.getPodByFulfillment(fulfillmentId)
                 .map(pod -> ResponseEntity.ok(mapper.toPodResponse(pod)))
                 .orElse(ResponseEntity.notFound().build());

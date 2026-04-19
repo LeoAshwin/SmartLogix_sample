@@ -21,6 +21,10 @@ public class RouteLeg {
     @Column(name = "`ManifestID`")
     private Long manifestId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "`ManifestID`", referencedColumnName = "`ManifestID`", insertable = false, updatable = false)
+    private Manifest manifest;
+
     @Column(name = "`Sequence`")
     private Integer sequence;
 

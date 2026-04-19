@@ -14,7 +14,7 @@ public interface ManifestRepository extends JpaRepository<Manifest, Long> {
 
     List<Manifest> findByDate(LocalDate date);
 
-    List<Manifest> findByVehicleId(Long vehicleId);
+    List<Manifest> findByVehicleId(String vehicleId);
 
-    List<Manifest> findByDriverId(Long driverId);
+    List<Manifest> findByDriverId(String driverId);
 }

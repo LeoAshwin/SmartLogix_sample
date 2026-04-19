@@ -6,10 +6,10 @@ import java.util.List;
 
 public record PodSubmissionRequest(
         @NotNull(message = "Fulfillment ID is required")
-        Long fulfillmentId,
+        String fulfillmentId,
 
         @NotNull(message = "Driver ID is required")
-        Long driverId,
+        String driverId,
 
         @NotEmpty(message = "At least one photo URI is required")
         List<String> photoUris,

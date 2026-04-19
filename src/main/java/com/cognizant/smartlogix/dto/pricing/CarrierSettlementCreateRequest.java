@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CarrierSettlementCreateRequest(
-        Long carrierId,
+        String carrierId,
         LocalDateTime periodStart,
         LocalDateTime periodEnd,
         BigDecimal grossBilled,

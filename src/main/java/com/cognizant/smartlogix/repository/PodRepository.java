@@ -8,8 +8,8 @@ import java.util.Optional;
 @Repository
 public interface PodRepository extends JpaRepository<Pod, Long> {
 
-    Optional<Pod> findByFulfillmentId(Long fulfillmentId);
+    Optional<Pod> findByFulfillmentId(String fulfillmentId);
 
-    boolean existsByFulfillmentId(Long fulfillmentId);
+    boolean existsByFulfillmentId(String fulfillmentId);
 
 }

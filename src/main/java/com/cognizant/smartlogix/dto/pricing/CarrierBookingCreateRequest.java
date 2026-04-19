@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CarrierBookingCreateRequest(
-        Long carrierId,
-        Long fulfillmentId,
+        String carrierId,
+        String fulfillmentId,
         String externalRef,
         LocalDateTime bookedAt,
         String status,

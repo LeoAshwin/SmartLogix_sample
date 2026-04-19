@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  */
 public record CarrierAdapterResponseDTO(
         Long adapterId,
-        Long carrierId,
+        String carrierId,
         String protocol,
         String credentialsJson,
         LocalDateTime lastSyncAt,

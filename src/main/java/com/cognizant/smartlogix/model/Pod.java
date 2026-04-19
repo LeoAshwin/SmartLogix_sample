@@ -23,12 +23,14 @@ public class Pod {
     private Long podId;
 
     @Column(unique = true, nullable = false)
-    private Long fulfillmentId;
+    private String fulfillmentId;
+
 
     private LocalDateTime deliveredAt;
 
     @Column(nullable = false)
-    private Long deliveredBy;
+    private String deliveredBy;
+
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")

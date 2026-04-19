@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * Module: 4.1 – Order Ingestion & Validation
  */
 @Entity
-@Table(name = "fulfillment")
+@Table(name = "fulfillment", indexes = {@Index(columnList = "service_zone_id, delivery_window_start")})
 public class Fulfillment {
 
     @Id
@@ -27,10 +27,14 @@ public class Fulfillment {
     private String orderId;
 
     @Column(name = "merchant_id")
-    private String merchantId;
+    private Long merchantId;
 
     @Column(name = "service_zone_id")
     private String serviceZoneId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_zone_id", referencedColumnName = "zone_id", insertable = false, updatable = false)
+    private ServiceZone serviceZone;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "service_level")
@@ -92,11 +96,11 @@ public class Fulfillment {
         this.orderId = orderId;
     }
 
-    public String getMerchantId() {
+    public Long getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(Long merchantId) {
         this.merchantId = merchantId;
     }
 

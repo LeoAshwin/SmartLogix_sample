@@ -6,8 +6,8 @@ import java.util.List;
 
 public record ManifestRequestDTO(
         Long depotId,
-        Long vehicleId,
-        Long driverId,
+        String vehicleId,
+        String driverId,
         LocalDate scheduledDate,
         Double maxCapacityKg,
         Double averageSpeedKmH,

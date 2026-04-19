@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 public record ReturnResponse(
         Long returnId,
-        Long fulfillmentId,
+        String fulfillmentId,
         String returnLabelUri,
         LocalDateTime pickupWindowStart,
         LocalDateTime pickupWindowEnd,

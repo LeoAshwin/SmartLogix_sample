@@ -31,7 +31,7 @@ public class CarrierBookingController {
 
     @GetMapping("/{carrierId}/bookings")
     public ResponseEntity<List<CarrierBookingResponse>> getCarrierBookings(
-            @PathVariable Long carrierId) {
+            @PathVariable String carrierId) {
 
         return ResponseEntity.ok(
                 carrierBookingService.getCarrierBookings(carrierId));

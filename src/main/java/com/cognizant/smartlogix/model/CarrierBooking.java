@@ -12,8 +12,11 @@ public class CarrierBooking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carrierBookingId;
 
-    private Long carrierId;
-    private Long fulfillmentId;
+    private String carrierId;
+
+
+    private String fulfillmentId;
+
 
     private String externalRef;
 
@@ -34,19 +37,19 @@ public class CarrierBooking {
         this.carrierBookingId = carrierBookingId;
     }
 
-    public Long getCarrierId() {
+    public String getCarrierId() {
         return carrierId;
     }
 
-    public void setCarrierId(Long carrierId) {
+    public void setCarrierId(String carrierId) {
         this.carrierId = carrierId;
     }
 
-    public Long getFulfillmentId() {
+    public String getFulfillmentId() {
         return fulfillmentId;
     }
 
-    public void setFulfillmentId(Long fulfillmentId) {
+    public void setFulfillmentId(String fulfillmentId) {
         this.fulfillmentId = fulfillmentId;
     }
 

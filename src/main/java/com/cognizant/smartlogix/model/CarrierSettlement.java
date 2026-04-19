@@ -14,7 +14,8 @@ public class CarrierSettlement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long settleId;
 
-    private Long carrierId;
+    private String carrierId;
+
 
     private LocalDateTime periodStart;
     private LocalDateTime periodEnd;
@@ -36,8 +37,8 @@ public class CarrierSettlement {
     public Long getSettleId() { return settleId; }
     public void setSettleId(Long settleId) { this.settleId = settleId; }
 
-    public Long getCarrierId() { return carrierId; }
-    public void setCarrierId(Long carrierId) { this.carrierId = carrierId; }
+    public String getCarrierId() { return carrierId; }
+    public void setCarrierId(String carrierId) { this.carrierId = carrierId; }
 
     public LocalDateTime getPeriodStart() { return periodStart; }
     public void setPeriodStart(LocalDateTime periodStart) { this.periodStart = periodStart; }

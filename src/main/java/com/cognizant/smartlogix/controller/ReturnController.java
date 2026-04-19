@@ -32,7 +32,7 @@ public class ReturnController {
 
     @GetMapping("/fulfillment/{fulfillmentId}")
     public ResponseEntity<List<ReturnResponse>> getReturnsByFulfillment(
-            @PathVariable Long fulfillmentId) {
+            @PathVariable String fulfillmentId) {
         return ResponseEntity.ok(
                 returnService.getReturnsByFulfillmentId(fulfillmentId));
     }

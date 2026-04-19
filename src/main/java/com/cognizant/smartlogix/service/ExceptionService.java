@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ExceptionService {
 
-    DeliveryException reportException(Long fulfillmentId, Long driverId,
+    DeliveryException reportException(String fulfillmentId, String driverId,
                                       String reasonCode, String details);
 
     List<DeliveryException> getOpenExceptions();

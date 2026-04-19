@@ -45,7 +45,7 @@ public class CarrierSettlementServiceImpl
 
     @Override
     public List<CarrierSettlementResponse> getCarrierSettlements(
-            Long carrierId) {
+            String carrierId) {
 
         return carrierSettlementRepository.findByCarrierId(carrierId)
                 .stream()

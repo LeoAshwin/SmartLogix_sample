@@ -1,7 +1,7 @@
 package com.cognizant.smartlogix.dto.manifest;
 
 public record StopDTO(
-        Long fulfillmentId,
+        String fulfillmentId,
         Integer sequence,
         String estimatedArrivalTime,
         String handlingInstructions,

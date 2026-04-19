@@ -37,8 +37,8 @@ public class ExceptionServiceImplTest {
     @InjectMocks
     private ExceptionServiceImpl exceptionService;
 
-    private final Long fulfillmentId = 1L;
-    private final Long driverId = 100L;
+    private final String fulfillmentId = "F-001";
+    private final String driverId = "D-100";
 
     @Test
     @DisplayName("Report Exception: Should suggest REATTEMPT for the first failure")
