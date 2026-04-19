@@ -13,10 +13,6 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.util.stream.Stream;
 
-/**
- * Service implementation for generating shipment manifest PDF documents.
- * Handles tabular layout, status-based color coding, and time formatting.
- */
 @Service
 public class PdfExportServiceImpl implements PdfExportService {
 
@@ -103,7 +99,6 @@ public class PdfExportServiceImpl implements PdfExportService {
         return out.toByteArray();
     }
 
-    /** Simple helper for formatting ISO strings to HH:mm for the PDF view. */
     private String formatTime(String dateTime) {
         if (dateTime == null || dateTime.equals("null") || dateTime.isEmpty()) return "--:--";
         try {

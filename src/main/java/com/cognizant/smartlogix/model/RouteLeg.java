@@ -7,9 +7,9 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "`RouteLeg`") // Strictly matching doc
-@Data
+@Table(name = "`RouteLeg`")
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RouteLeg {

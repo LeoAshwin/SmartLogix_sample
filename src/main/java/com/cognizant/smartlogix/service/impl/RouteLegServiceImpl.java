@@ -13,10 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Implementation of RouteLegService managing the segmented delivery path.
- * Responsible for generating and calculating travel metrics between individual stops.
- */
 @Service
 public class RouteLegServiceImpl implements RouteLegService {
 
@@ -36,10 +32,6 @@ public class RouteLegServiceImpl implements RouteLegService {
         routeLegRepository.deleteByManifestId(manifestId);
     }
 
-    /**
-     * Requirement 4.4: Parses the manifest stop sequence and persists the individual legs.
-     * Recalculates distances and durations for each segment of the journey.
-     */
     @Override
     @Transactional
     public void generateLegsForManifest(Long manifestId, String stopsJson) {
@@ -71,9 +63,6 @@ public class RouteLegServiceImpl implements RouteLegService {
         }
     }
 
-    /**
-     * Internal utility implementing the Haversine formula for spherical distance.
-     */
     private double calculateHaversine(StopDTO start, StopDTO end) {
         double dLat = Math.toRadians(end.latitude() - start.latitude());
         double dLon = Math.toRadians(end.longitude() - start.longitude());

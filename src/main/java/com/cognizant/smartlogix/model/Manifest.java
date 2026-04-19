@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Manifest") // Strictly matching doc
+@Table(name = "Manifest")
 @Data
 @Builder
 @NoArgsConstructor
