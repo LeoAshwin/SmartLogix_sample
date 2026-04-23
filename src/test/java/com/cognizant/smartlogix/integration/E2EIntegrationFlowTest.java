@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Assumptions;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,7 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * SmartLogix Phase 2: "Golden Path" End-to-End Integration Test
- * This suite validates the full lifecycle from Ingestion to Returns.
+ *
+ * <p>Validates the full lifecycle from Ingestion to Returns with JWT auth.
+ * Each test acquires a Bearer token for the appropriate role before calling
+ * the protected API endpoint.
+ *
+ * <p>Test user credentials are seeded by the Flyway migration
+ * V20260424000000__jwt_roles_seed_users.sql.
+ * All seed accounts share the password: {@code Password@123}
  */
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,13 +43,92 @@ public class E2EIntegrationFlowTest {
         private static String fulfillmentId;
         private static Long uniqueTransactionId;
 
+        // Cached tokens per role — fetched lazily
+        private static String adminToken;
+        private static String dispatcherToken;
+        private static String driverToken;
+        private static String carrierToken;
+        private static String customerToken;
+        private static String merchantToken;
+
         @BeforeEach
         public void setup() {
-                this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+                // Apply Spring Security filter chain to MockMvc
+                this.mockMvc = MockMvcBuilders
+                        .webAppContextSetup(this.webApplicationContext)
+                        .apply(SecurityMockMvcConfigurers.springSecurity())
+                        .build();
+
                 if (uniqueTransactionId == null) {
                         uniqueTransactionId = System.currentTimeMillis() % 100000;
                 }
         }
+
+        // =====================================================================
+        // Auth Helper
+        // =====================================================================
+
+        /**
+         * Authenticates against {@code POST /api/auth/login} and returns the
+         * Bearer JWT token string (without the "Bearer " prefix).
+         *
+         * @param email    seed user email
+         * @param password shared test password
+         * @return raw JWT token
+         */
+        private String loginAs(String email, String password) throws Exception {
+                String body = """
+                        {"email": "%s", "password": "%s"}
+                        """.formatted(email, password);
+
+                MvcResult result = mockMvc.perform(post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(body))
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+                return JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+        }
+
+        /** Returns a cached admin token, fetching it on first call. */
+        private String adminToken() throws Exception {
+                if (adminToken == null) adminToken = loginAs("admin@smartlogix.io", "Password@123");
+                return adminToken;
+        }
+
+        /** Returns a cached dispatcher token. */
+        private String dispatcherToken() throws Exception {
+                if (dispatcherToken == null) dispatcherToken = loginAs("dispatcher@smartlogix.io", "Password@123");
+                return dispatcherToken;
+        }
+
+        /** Returns a cached driver token. */
+        private String driverToken() throws Exception {
+                if (driverToken == null) driverToken = loginAs("driver@smartlogix.io", "Password@123");
+                return driverToken;
+        }
+
+        /** Returns a cached carrier token. */
+        private String carrierToken() throws Exception {
+                if (carrierToken == null) carrierToken = loginAs("carrier@smartlogix.io", "Password@123");
+                return carrierToken;
+        }
+
+        /** Returns a cached customer token. */
+        private String customerToken() throws Exception {
+                if (customerToken == null) customerToken = loginAs("customer@smartlogix.io", "Password@123");
+                return customerToken;
+        }
+
+        /** Returns a cached merchant token. */
+        private String merchantToken() throws Exception {
+                if (merchantToken == null) merchantToken = loginAs("merchant@smartlogix.io", "Password@123");
+                return merchantToken;
+        }
+
+        // =====================================================================
+        // Master Data Seeding
+        // =====================================================================
 
         /**
          * Seeds essential master data to satisfy Foreign Key constraints.
@@ -77,9 +164,13 @@ public class E2EIntegrationFlowTest {
                                 "VALUES (1, 'Central Hub', 'ACTIVE')");
         }
 
+        // =====================================================================
+        // Test Checkpoints
+        // =====================================================================
+
         @Test
         @Order(1)
-        @DisplayName("Checkpoint 1: Infrastructure Setup")
+        @DisplayName("Checkpoint 1: Infrastructure Setup (LOGISTICS_MANAGER)")
         void checkpt1_setupMasterData() throws Exception {
                 seedMasterData();
 
@@ -93,16 +184,17 @@ public class E2EIntegrationFlowTest {
                                 }
                                 """;
 
-                // Validate API reachability for Infrastructure
+                // ServiceZoneController requires LOGISTICS_MANAGER or ADMIN
                 mockMvc.perform(post("/api/service-zones")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + adminToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(2)
-        @DisplayName("Checkpoint 2: Order Ingestion")
+        @DisplayName("Checkpoint 2: Order Ingestion (MERCHANT)")
         void checkpt2_orderIngestionModule() throws Exception {
                 String payload = """
                                 {
@@ -120,6 +212,7 @@ public class E2EIntegrationFlowTest {
 
                 MvcResult result = mockMvc.perform(post("/api/fulfillments")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + merchantToken())
                                 .content(payload))
                                 .andReturn();
 
@@ -137,7 +230,7 @@ public class E2EIntegrationFlowTest {
 
         @Test
         @Order(3)
-        @DisplayName("Checkpoint 3: Carrier Booking")
+        @DisplayName("Checkpoint 3: Carrier Booking (DISPATCHER)")
         void checkpt3_carrierPricingModule() throws Exception {
                 String payload = """
                                 {
@@ -149,13 +242,14 @@ public class E2EIntegrationFlowTest {
 
                 mockMvc.perform(post("/api/carriers/bookings")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + dispatcherToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(4)
-        @DisplayName("Checkpoint 4: Manifest Generation")
+        @DisplayName("Checkpoint 4: Manifest Generation (DISPATCHER)")
         void checkpt4_fleetRoutingModule() throws Exception {
                 String payload = """
                                 {
@@ -172,25 +266,27 @@ public class E2EIntegrationFlowTest {
 
                 mockMvc.perform(post("/api/v1/manifests/generate")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + dispatcherToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(5)
-        @DisplayName("Checkpoint 5: Tracking Event")
+        @DisplayName("Checkpoint 5: Tracking Event (DRIVER)")
         void checkpt5_trackingModule() throws Exception {
                 String payload = "{\"lat\": 34.0, \"lng\": -118.0, \"timestamp\": \"2026-12-31T11:00:00Z\"}";
 
                 mockMvc.perform(post("/api/v1/driver/events/" + fulfillmentId + "?type=OUT_FOR_DELIVERY")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + driverToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(6)
-        @DisplayName("Checkpoint 6: Exception Report")
+        @DisplayName("Checkpoint 6: Exception Report (DRIVER)")
         void checkpt6_exceptionModule() throws Exception {
                 String payload = """
                                 {
@@ -203,13 +299,14 @@ public class E2EIntegrationFlowTest {
 
                 mockMvc.perform(post("/api/v1/driver/exceptions/report")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + driverToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(7)
-        @DisplayName("Checkpoint 7: Proof of Delivery (Final Calibration)")
+        @DisplayName("Checkpoint 7: Proof of Delivery (DRIVER)")
         void checkpt7_podModule() throws Exception {
                 Assumptions.assumeTrue(fulfillmentId != null);
 
@@ -237,13 +334,14 @@ public class E2EIntegrationFlowTest {
 
                 mockMvc.perform(post("/api/v1/driver/pod")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + driverToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @Order(8)
-        @DisplayName("Checkpoint 8: Returns Initiation")
+        @DisplayName("Checkpoint 8: Returns Initiation (CUSTOMER)")
         void checkpt8_returnModule() throws Exception {
                 String payload = """
                                 {
@@ -255,6 +353,7 @@ public class E2EIntegrationFlowTest {
 
                 mockMvc.perform(post("/api/returns")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + customerToken())
                                 .content(payload))
                                 .andExpect(status().is2xxSuccessful());
         }

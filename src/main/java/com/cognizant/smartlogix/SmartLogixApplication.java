@@ -3,11 +3,13 @@ package com.cognizant.smartlogix;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan("com.cognizant.smartlogix.security")
 public class SmartLogixApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(SmartLogixApplication.class);

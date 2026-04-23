@@ -12,8 +12,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -27,15 +29,18 @@ public class TrackingEventController {
     private final TrackingEventService trackingEventService;
     private final ResponseMapper mapper;
 
-
+    /**
+     * Driver records a real-time tracking event (e.g. OUT_FOR_DELIVERY).
+     * Only the DRIVER role may post new events.
+     */
     @PostMapping("/{fulfillmentId}")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<TrackingEventResponse> recordEvent(
             @PathVariable String fulfillmentId,
             @RequestParam EventType type,
             @RequestBody(required = false) LocationDetails location,
             @RequestHeader(value = "X-Device-ID", required = false) String deviceId,
             @RequestHeader(value = "X-App-Version", required = false) String appVersion) {
-
 
         TrackingMetadata metadata = new TrackingMetadata(
                 deviceId != null ? deviceId : "UNKNOWN-DEVICE",
@@ -55,14 +60,22 @@ public class TrackingEventController {
         return ResponseEntity.ok(mapper.toTrackingResponse(event));
     }
 
+    /**
+     * Customer, merchant and ops staff can view tracking history.
+     */
     @GetMapping("/{fulfillmentId}/history")
+    @PreAuthorize("hasAnyRole('CUSTOMER','MERCHANT','DISPATCHER','LOGISTICS_MANAGER','ADMIN')")
     public ResponseEntity<List<TrackingEventResponse>> getHistory(@PathVariable String fulfillmentId) {
         List<TrackingEvent> history = trackingEventService.getHistoryByFulfillment(fulfillmentId);
         return ResponseEntity.ok(mapper.toTrackingResponseList(history));
     }
 
-
+    /**
+     * Driver syncs offline-captured events during network reconnect.
+     * Only DRIVER role can push sync batches.
+     */
     @PostMapping("/sync")
+    @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<List<TrackingEventResponse>> syncOfflineEvents(
             @RequestHeader("X-Sync-ID") String syncId,
             @Valid @RequestBody List<TrackingEventRequest> events) {
